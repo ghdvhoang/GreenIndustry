@@ -1,47 +1,76 @@
-<x-guest-layout>
-    <!-- Session Status -->
-    <x-auth-session-status class="mb-4" :status="session('status')" />
+@include('auth.layout.header')
 
-    <form method="POST" action="{{ route('login') }}">
-        @csrf
+<!-- Main Start -->
+<main class="main my-4 p-5">
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-lg-6">
+                <div class="login-img">
+                    <img class="img-fluid" src="{{ asset('assets/frontend/images/login.png') }} " alt="">
+                </div>
+            </div>
+            <div class="col-lg-6">
+                <div class="login-txt ms-s ms-lg-5">
 
-        <!-- Email Address -->
-        <div>
-            <x-input-label for="email" :value="__('Email')" />
-            <x-text-input id="email" class="block mt-1 w-full" type="email" name="email" :value="old('email')" required autofocus autocomplete="username" />
-            <x-input-error :messages="$errors->get('email')" class="mt-2" />
+                    @if($message = Session::get('error_message'))
+                        <div class="alert alert-warning alert-dismissible fade show" role="alert">
+                            <strong>{{get_phrase('Public sign up are not allowed')}}!</strong> {{get_phrase('You should contact the site administrator')}}.
+                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                        </div>
+                    @endif
+
+                    <h3>{{get_phrase('Login')}}</h3>
+                       
+
+                    <form method="POST" action="{{ route('login') }}">
+                        @csrf
+            
+                       
+                        <div class="form-group form-email">
+                            <label for="#">{{get_phrase('Email')}}</label>
+                            <input type="email" name="email" value="{{ old('email') }}" placeholder="{{get_phrase('Enter your email address')}}">
+                        </div>
+                        <p class="text-danger">{{ $errors->first('email') }}</p>
+                        <div class="form-group form-pass">
+                            <label for="#">{{get_phrase('Password')}}</label>
+                            <input type="password" name="password" placeholder="{{get_phrase('Your password')}}">
+                        </div>
+            
+                        <!-- Remember Me -->
+                        <div class="mb-3 form-check">
+                            <input id="remember_me" type="checkbox" class="form-check-input" name="remember">
+                            <label class="form-check-label" for="remember_me">{{ get_phrase('Remember me') }}</label>
+                          </div>
+
+                        <input class="btn btn-primary my-3" type="submit" name="submit" id="submit" value="Log In">
+
+                        
+                        <div class="flex items-center justify-end mt-2">
+                            @if (Route::has('password.request'))
+                                <a class="" href="{{ route('password.request') }}">
+                                    {{ get_phrase('Forgot your password?') }}
+                                </a>
+                            @endif
+                        </div>
+
+                        <!-- <div class="row mt-4">
+                            <div class="col-md-6 pb-2">
+                                <a href="javascript:;" onclick="$('[name=email]').val('admin@example.com'); $('[name=password]').val('12345678');" class="btn btn-outline-primary w-100">Login as Admin</a>
+                            </div>
+                            <div class="col-md-6 pb-2">
+                                <a href="javascript:;" onclick="$('[name=email]').val('karenjrios@example.com'); $('[name=password]').val('12345678');" class="btn btn-outline-primary w-100">Login as General user</a>
+                            </div>
+                        </div> -->
+            
+                    </form>
+
+                </div>
+            </div>
         </div>
 
-        <!-- Password -->
-        <div class="mt-4">
-            <x-input-label for="password" :value="__('Password')" />
+    </div> <!-- container end -->
+</main>
+<!-- Main End -->
 
-            <x-text-input id="password" class="block mt-1 w-full"
-                            type="password"
-                            name="password"
-                            required autocomplete="current-password" />
+@include('auth.layout.footer')
 
-            <x-input-error :messages="$errors->get('password')" class="mt-2" />
-        </div>
-
-        <!-- Remember Me -->
-        <div class="block mt-4">
-            <label for="remember_me" class="inline-flex items-center">
-                <input id="remember_me" type="checkbox" class="rounded dark:bg-gray-900 border-gray-300 dark:border-gray-700 text-indigo-600 shadow-sm focus:ring-indigo-500 dark:focus:ring-indigo-600 dark:focus:ring-offset-gray-800" name="remember">
-                <span class="ms-2 text-sm text-gray-600 dark:text-gray-400">{{ __('Remember me') }}</span>
-            </label>
-        </div>
-
-        <div class="flex items-center justify-end mt-4">
-            @if (Route::has('password.request'))
-                <a class="underline text-sm text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 dark:focus:ring-offset-gray-800" href="{{ route('password.request') }}">
-                    {{ __('Forgot your password?') }}
-                </a>
-            @endif
-
-            <x-primary-button class="ms-3">
-                {{ __('Log in') }}
-            </x-primary-button>
-        </div>
-    </form>
-</x-guest-layout>
