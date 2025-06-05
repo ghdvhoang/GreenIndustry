@@ -4,7 +4,57 @@
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\File;
 
+if (!function_exists('get_all_language')) {
+    function get_all_language()
+    {
+        return DB::table('languages')->select('name')->distinct()->get();
+    }
+}
 
+if (!function_exists('get_phrase')) {
+    function get_phrase($phrase = '', $value_replace = array())
+    {
+        if (Session('active_language')) {
+            $active_language = Session('active_language');
+        } else {
+            $active_language = get_settings('system_language');
+            Session(['active_language' => get_settings('system_language')]);
+        }
+        $query = DB::table('languages')->where('name', $active_language)->where('phrase', $phrase);
+        if ($query->count() > 0) {
+            $tValue = $query->value('translated');
+        } else {
+            $tValue = $phrase;
+            $all_language = get_all_language();
+
+            if ($all_language->count() > 0) {
+                foreach ($all_language as $language) {
+
+                    if (DB::table('languages')->where('name', $language->name)->where('phrase', $phrase)->get()->count() == 0) {
+                        DB::table('languages')->insert(array('name' => strtolower($language->name), 'phrase' => $phrase, 'translated' => $phrase));
+                    }
+                }
+            } else {
+                DB::table('languages')->insert(array('name' => 'english', 'phrase' => $phrase, 'translated' => $phrase));
+            }
+        }
+
+        if (count($value_replace) > 0) {
+            $translated_value_arr = explode('____', $tValue);
+            $tValue = '';
+            foreach ($translated_value_arr as $key => $value) {
+
+                if (array_key_exists($key, $value_replace)) {
+                    $tValue .= $value . $value_replace[$key];
+                } else {
+                    $tValue .= $value;
+                }
+            }
+        }
+
+        return $tValue;
+    }
+}
 
 // RANDOM NUMBER GENERATOR FOR ELSEWHERE
 if (!function_exists('random')) {

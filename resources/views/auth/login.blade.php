@@ -28,7 +28,7 @@
                        
                         <div class="form-group form-email">
                             <label for="#">{{get_phrase('Email')}}</label>
-                            <input type="email" name="email" value="{{ old('email') }}" placeholder="{{get_phrase('Enter your email address')}}">
+                            <input type="email" name="email"  placeholder="{{get_phrase('Enter your email address')}}">
                         </div>
                         <p class="text-danger">{{ $errors->first('email') }}</p>
                         <div class="form-group form-pass">
