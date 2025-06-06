@@ -1,17 +1,26 @@
-<x-app-layout>
-    <x-slot name="header">
-        <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">
-            {{ __('Dashboard') }}
-        </h2>
-    </x-slot>
 
-    <div class="py-12">
-        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-            <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg">
-                <div class="p-6 text-gray-900 dark:text-gray-100">
-                    {{ __("You're logged in!") }}
+@include('auth.layout.header')
+
+<!-- Main Start -->
+    <main class="main my-4 p-5">
+        <div class="container">
+            <div class="row align-items-center">
+                <div class="col-lg-6">
+                    <div class="login-img">
+                        <img class="img-fluid" src="{{ asset('assets/frontend/images/login.png') }}" alt="">
+                    </div>
+                </div>
+                <div class="col-lg-6">
+                    <div class="login-txt ms-5 text-center w-100">
+                        <h3>{{ get_phrase('Congratulations')}}</h3>
+                        <h4>{{ get_phrase('Your Verification is Done')}}</h4>
+                        <h5>{{ get_phrase('Now Explore')}}</h5>
+                    </div>
                 </div>
             </div>
-        </div>
-    </div>
-</x-app-layout>
+
+        </div> <!-- container end -->
+    </main>
+    <!-- Main End -->
+
+@include('auth.layout.footer')

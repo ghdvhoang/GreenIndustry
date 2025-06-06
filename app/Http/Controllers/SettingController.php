@@ -6,7 +6,7 @@ use App\Models\FileUploader;
 use App\Models\Setting;
 use Illuminate\Http\Request;
 
-class Settings extends Controller
+class SettingController extends Controller
 {
     public function system_settings_logo_save(Request $request)
     {
