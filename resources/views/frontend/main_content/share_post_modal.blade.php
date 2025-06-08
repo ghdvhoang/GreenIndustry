@@ -4,11 +4,11 @@
     }else{
         $post_route = route('share.my.timeline');
     };
-  
+
 @endphp
 <div class="social-share">
     <ul class="site-share text-center my-3">
-        @foreach (Share::currentPage()->facebook()->twitter()->linkedin()->telegram()->getRawLinks(); as $key => $value )
+        @foreach (Share::currentPage()->facebook()->twitter()->linkedin()->telegram()->getRawLinks() as $key => $value )
             <li><a href="{{ $value }}" target="_blank" class="only_for_share_page"><i class="fa-brands fa-{{ $key }}"></i></a></li>
         @endforeach
     </ul>

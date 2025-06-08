@@ -29,6 +29,10 @@ Route::get('/users/{user_id}', function ($user_id) {
     return view('welcome');
 });
 
+Route::get('/email/verify/success', function () {
+    return view('dashboard', ['verified' => true]);
+})->name('verification.success');
+
 Route::get('/dashboard', function () {
     return view('dashboard');
 })->middleware(['auth', 'verified'])->name('dashboard');
@@ -85,13 +89,13 @@ Route::controller(MainController::class)->middleware('auth', 'verified', 'activi
     // live streaming
     Route::get('/streaming/live/{id}', 'live_streaming')->name('go.live');
 
-   
+
 
     // Theme Controller
     Route::post('/update-theme-color', 'updateThemeColor')->name('update-theme-color');
 
 
     Route::get('album/details/page_show/{id}', 'details_album')->name('album.details.page_show');
-    
+
 
 });

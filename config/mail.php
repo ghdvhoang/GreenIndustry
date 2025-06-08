@@ -39,6 +39,7 @@ return [
 
     'mailers' => [
         'smtp' => [
+            'transport' => 'smtp',
             'host' => $config['MAIL_HOST'],
             'port' => $config['MAIL_PORT'],
             'encryption' => $config['MAIL_ENCRYPTION'],
@@ -51,7 +52,7 @@ return [
         'ses' => [
             'transport' => 'ses',
         ],
-        
+
         'mailgun' => [
             'transport' => 'mailgun',
         ],

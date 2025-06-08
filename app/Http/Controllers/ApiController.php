@@ -15,7 +15,7 @@ class ApiController extends Controller
             'password' => 'required|string'
         ]);
 
-        // email checking 
+        // email checking
         $user = User::where('email', $fields['email'])->first();
 
         // Check password
@@ -56,5 +56,52 @@ class ApiController extends Controller
             ], 400);
         }
 
+    }
+        public function signup(Request $request)
+    {
+        // return $request->all();
+        $response = array();
+
+        // $request->validate([
+        //     'name' => ['required', 'string', 'max:255'],
+        //     'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
+        //     'password' => ['required'],
+        // ]);
+        // $request->validate([
+        //     'name' => ['required', 'string', 'max:255'],
+        //     'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
+        //     'password' => ['required', 'confirmed', Rules\Password::defaults()],
+        // ]);
+
+        $rules = array(
+            'name' => ['required', 'string', 'max:255'],
+            'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
+            'password' => ['required', 'confirmed', Rules\Password::defaults()]
+        );
+        $validator = Validator::make($request->all(), $rules);
+        if ($validator->fails()) {
+            return json_encode(array('validationError' => $validator->getMessageBag()->toArray()));
+        }
+        // return $response;
+        $user = User::create([
+            'user_role' => 'general',
+            'username' => rand(100000, 999999),
+            'name' => $request->name,
+            'email' => $request->email,
+            'friends' => json_encode(array()),
+            'followers' => json_encode(array()),
+            'timezone' => $request->timezone,
+            'password' => Hash::make($request->password),
+            'status' => 0,
+            'lastActive' => Carbon::now(),
+            'created_at' => time()
+        ]);
+        if ($user) {
+            $response['success'] = true;
+            $response['message'] = 'user create successfully';
+        }
+        event(new Registered($user));
+
+        return $response;
     }
 }
