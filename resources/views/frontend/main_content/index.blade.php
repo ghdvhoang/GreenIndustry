@@ -1,6 +1,6 @@
 @php $user_info = Auth()->user() @endphp
 
-@include('frontend.story.index')
+{{-- @include('frontend.story.index') --}}
 
 @include('frontend.main_content.create_post')
 
