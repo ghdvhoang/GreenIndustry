@@ -1,12 +1,13 @@
 <?php
 
 use App\Http\Controllers\MainController;
+use App\Http\Controllers\ModalController;
 use App\Http\Controllers\Profile;
 use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Route;
-use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Http\Request;
 
 Route::get('/clear-cache', function () {
     Artisan::call('cache:clear');
@@ -47,6 +48,17 @@ Route::middleware('auth')->group(function () {
 require __DIR__.'/auth.php';
 require __DIR__.'/custom_routes.php';
 require __DIR__.'/user.php';
+
+Route::get('language/switch/{language}', function (Request $request, $language) {
+    $request->session()->put('active_language', $language);
+    return redirect()->back();
+})->name('language.switch');
+
+//Modal controllers group routing
+Route::controller(ModalController::class)->middleware('auth', 'verified', 'activity')->group(function () {
+    Route::any('/load_modal_content/{view_path}', 'common_view_function')->name('load_modal_content');
+});
+
 
 Route::controller(MainController::class)->middleware(
     'auth',
@@ -142,3 +154,4 @@ Route::controller(Profile::class)->middleware(
     Route::post('/profile/update_profile/', 'update_profile')->name('profile.update_profile');
 
 });
+

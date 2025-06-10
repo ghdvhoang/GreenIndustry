@@ -13,12 +13,12 @@
                     <li class="@if (Route::currentRouteName() == 'timeline' || Route::currentRouteName() == 'single.post') active @endif"><a href="{{ route('timeline') }}"><img
                                 src="{{ asset('storage/images/timeline-2.svg') }}"
                                 alt="Timeline">{{ get_phrase('Timeline') }}</a></li>
-                    {{-- <li class="@if (Route::currentRouteName() == 'memories') active @endif"><a href="{{ route('memories') }}"><img --}}
+                    {{-- <li class="@if (Route::currentRouteName() == 'memories') active @endif"><a href="{{ route('memories') }}"><img
                                 src="{{ asset('storage/images/memories.svg') }}"
                                 alt="memories">{{ get_phrase('Memories') }}</a></li>
-                    {{-- <li class="@if (Route::currentRouteName() == 'badge') active @endif"><a href="{{ route('badge') }}"><img --}}
+                    <li class="@if (Route::currentRouteName() == 'badge') active @endif"><a href="{{ route('badge') }}"><img
                                 src="{{ asset('storage/images/badge.svg') }}"
-                                alt="Badge">{{ get_phrase('Badge') }}</a></li>
+                                alt="Badge">{{ get_phrase('Badge') }}</a></li> --}}
                     <li class="@if (Route::currentRouteName() == 'profile' ||
                             Route::currentRouteName() == 'profile.friends' ||
                             Route::currentRouteName() == 'profile.photos' ||

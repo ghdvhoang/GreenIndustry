@@ -201,3 +201,76 @@ if (!function_exists('get_system_logo_favicon')) {
         }
     }
 }
+
+if (!function_exists('script_checker')) {
+    function script_checker($string = '', $convert_string = true)
+    {
+
+        if ($convert_string) {
+            return nl2br(htmlspecialchars(strip_tags($string)));
+        } else {
+            return $string;
+        }
+
+    }
+}
+
+if (!function_exists('date_formatter')) {
+    function date_formatter($strtotime = "", $format = "")
+    {
+        if ($strtotime && !is_numeric($strtotime)) {
+            $strtotime = strtotime($strtotime);
+        } elseif (!$strtotime) {
+            $strtotime = time();
+        }
+
+        if ($format == "") {
+            return date('d', $strtotime) . ' ' . date('M', $strtotime) . ' ' . date('Y', $strtotime);
+        }
+
+        if ($format == 1) {
+            return date('D', $strtotime) . ', ' . date('d', $strtotime) . ' ' . date('M', $strtotime) . ' ' . date('Y', $strtotime);
+        }
+
+        if ($format == 2) {
+            $time_difference = time() - $strtotime;
+            if ($time_difference <= 10) {return get_phrase('Just now');}
+            //864000 = 10 days
+            if ($time_difference > 864000) {return date_formatter($strtotime, 3);}
+
+            $condition = array(
+                12 * 30 * 24 * 60 * 60 => get_phrase('year'),
+                30 * 24 * 60 * 60 => get_phrase('month'),
+                24 * 60 * 60 => get_phrase('day'),
+                60 * 60 => 'hour',
+                60 => 'minute',
+                1 => 'second',
+            );
+
+            foreach ($condition as $secs => $str) {
+                $d = $time_difference / $secs;
+                if ($d >= 1) {
+                    $t = round($d);
+                    return $t . ' ' . $str . ($t > 1 ? 's' : '') . ' ' . get_phrase('ago');
+                }
+            }
+        }
+
+        if ($format == 3) {
+            $date = date('d', $strtotime);
+            $date .= ' ' . date('M', $strtotime);
+
+            if (date('Y', $strtotime) != date('Y', time())) {
+                $date .= date(' Y', $strtotime);
+            }
+
+            $date .= ' ' . get_phrase('at') . ' ';
+            $date .= date('h:i a', $strtotime);
+            return $date;
+        }
+
+        if ($format == 4) {
+            return date('d', $strtotime) . ' ' . date('M', $strtotime) . ' ' . date('Y', $strtotime) . ', ' . date('h:i:s A', $strtotime);
+        }
+    }
+}
