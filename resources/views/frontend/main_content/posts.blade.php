@@ -276,7 +276,7 @@
                             @if ($post->post_type != 'live_streaming' && $post->location == '')
                                 <li>
                                     <a class="dropdown-item" href="javascript:void(0)"
-                                        onclick="showCustomModal('<?php echo route('edit_post_form', $post->post_id); ?>', '{{ get_phrase('Edit post') }}', 'lg')">
+                                        onclick="showCustomModal('<?php echo route('edit_post_form', ['id' => $post->id]); ?>', '{{ get_phrase('Edit post') }}', 'lg')">
                                         <i class="fa-solid fa-pencil"></i> {{ get_phrase('Edit') }}</a>
                                 </li>
                             @endif

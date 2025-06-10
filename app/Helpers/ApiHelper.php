@@ -86,3 +86,19 @@ if (!function_exists('get_cover_photos')) {
         }
     }
 }
+if (!function_exists('get_post_images')) {
+    function get_post_images($file_name = '', $optimized = "")
+    {
+        //this file comes from another online link as like amazon s3 server
+        if (strpos($file_name, 'https://') !== false) {
+            return $file_name;
+        }
+
+        $optimized = $optimized . '/';
+        if (File::exists('public/storage/post/images/' . $optimized . $file_name) && is_file('public/storage/post/images/' . $optimized . $file_name)) {
+            return url('public/storage/post/images/' . $optimized . $file_name);
+        } else {
+            return url('public/storage/post/images/default.png');
+        }
+    }
+}

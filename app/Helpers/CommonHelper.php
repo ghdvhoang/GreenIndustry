@@ -179,6 +179,24 @@ if (!function_exists('get_cover_photo')) {
         }
     }
 }
+
+if (!function_exists('get_post_image')) {
+    function get_post_image($file_name = '', $optimized = "")
+    {
+        //this file comes from another online link as like amazon s3 server
+        if (strpos($file_name, 'https://') !== false) {
+            return $file_name;
+        }
+
+        $optimized = $optimized . '/';
+        if (File::exists('public/storage/post/images/' . $optimized . $file_name) && is_file('public/storage/post/images/' . $optimized . $file_name)) {
+            return asset('storage/post/images/' . $optimized . $file_name);
+        } else {
+            return asset('storage/post/images/default.jpg');
+        }
+    }
+}
+
 //get system dark logo
 if (!function_exists('get_system_logo_favicon')) {
     function get_system_logo_favicon($file_name = "", $foldername = "")

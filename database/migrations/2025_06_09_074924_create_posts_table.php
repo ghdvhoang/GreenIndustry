@@ -16,13 +16,13 @@ return new class extends Migration
             $table->unsignedBigInteger('post_id')->nullable();
             $table->unsignedBigInteger('user_id')->nullable();
             $table->string('publisher')->nullable();
-            $table->string('post_type')->nullable(); // e.g., general
-            $table->string('privacy')->nullable(); // e.g., public/private
+            $table->string('post_type')->nullable();
+            $table->string('privacy')->nullable(); 
             $table->json('tagged_user_ids')->nullable();
             $table->unsignedBigInteger('activity_id')->nullable();
             $table->string('location')->nullable();
             $table->text('description')->nullable();
-            $table->string('status')->nullable(); // e.g., active
+            $table->string('status')->nullable();
             $table->string('report_status')->nullable();
             $table->json('user_reacts')->nullable();
             $table->string('shared_user')->nullable();

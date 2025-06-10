@@ -2,7 +2,7 @@
 :root{
 	--text-color: #49484F;
 	--font-family: 'Poppins', sans-serif;
-	--color-global :  #5A2FF9;
+	--color-global :  #31A24C;
 	--color-global-hover :  #fff;
 	--color-white : #fff;
 	--color-dark : #0D091D;
@@ -183,9 +183,9 @@ body{
 	border: transparent !important;
 }
 
-.header{
+/* .header{
 	background-color: var(--color-global) !important;
-}
+} */
 .text-primary{
 	color: var(--color-global) !important;
 }

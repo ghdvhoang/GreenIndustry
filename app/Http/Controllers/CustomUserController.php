@@ -1,7 +1,7 @@
 <?php
 
 namespace App\Http\Controllers;
-
+use Illuminate\Support\Facades\Auth;
 use App\Models\Albums;
 use App\Models\Friendships;
 use App\Models\Media_files;
