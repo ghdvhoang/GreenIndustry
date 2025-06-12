@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Comments;
 use App\Models\FileUploader;
 use App\Models\Media_files;
 use Illuminate\Support\Facades\Auth;
@@ -9,6 +10,7 @@ use Illuminate\Database\Query\JoinClause;
 use Illuminate\Http\Request;
 use App\Models\User;
 use App\Models\Posts;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rule;
@@ -500,4 +502,197 @@ class MainController extends Controller
         return json_encode($response);
     }
 
+    public function my_react(Request $request)
+    {
+        $form_data = $request->all();
+
+        if ($form_data['type'] == 'post') {
+            $post_data = Posts::where('post_id', $form_data['post_id'])->get()->first();
+
+            $all_reacts = json_decode($post_data['user_reacts'], true);
+
+            if ($form_data['request_type'] == 'update') {
+                $all_reacts[$this->user->id] = $form_data['react'];
+            }
+
+            if ($form_data['request_type'] == 'toggle') {
+                if (array_key_exists($this->user->id, $all_reacts)) {
+                    unset($all_reacts[$this->user->id]);
+                } else {
+                    $all_reacts[$this->user->id] = 'like';
+                }
+            }
+
+            $data['user_reacts'] = json_encode($all_reacts);
+            Posts::where('post_id', $form_data['post_id'])->update($data);
+
+            $page_data['user_reacts'] = $all_reacts;
+            $page_data['user_info'] = $this->user;
+            $page_data['ajax_call'] = true;
+            $page_data['my_react'] = true;
+            $page_data['post_react'] = true;
+
+            if ($form_data['response_type'] == 'number') {
+                return count($all_reacts);
+            } else {
+                return view('frontend.main_content.post_reacts', $page_data);
+            }
+        }
+    }
+    public function my_comment_react(Request $request)
+    {
+        $form_data = $request->all();
+
+        $comment_data = Comments::where('comment_id', $form_data['comment_id'])->get()->first();
+
+        $all_reacts = json_decode($comment_data['user_reacts'], true);
+
+        if ($form_data['request_type'] == 'update') {
+            $all_reacts[$this->user->id] = $form_data['react'];
+        }
+
+        if ($form_data['request_type'] == 'toggle') {
+            if (array_key_exists($this->user->id, $all_reacts)) {
+                unset($all_reacts[$this->user->id]);
+            } else {
+                $all_reacts[$this->user->id] = 'like';
+            }
+        }
+
+        $data['user_reacts'] = json_encode($all_reacts);
+        Comments::where('comment_id', $form_data['comment_id'])->update($data);
+
+        $page_data['user_comment_reacts'] = $all_reacts;
+        $page_data['user_info'] = $this->user;
+        $page_data['ajax_call'] = true;
+        $page_data['my_react'] = true;
+        $page_data['comment_react'] = true;
+        return view('frontend.main_content.comment_reacts', $page_data);
+    }
+
+    public function load_post_comments(Request $request)
+    {
+        $post = Posts::where('posts.status', 'active')
+            ->where('posts.post_id', $request->post_id)
+            ->join('users', 'posts.user_id', '=', 'users.id')
+            ->select('posts.*', 'users.name', 'users.photo', 'users.friends', 'posts.created_at as created_at')->get()->first();
+
+        $comments = DB::table('comments')
+            ->join('users', 'comments.user_id', '=', 'users.id')
+            ->where('comments.is_type', $request->type)
+            ->where('comments.id_of_type', $request->post_id)
+            ->where('comments.parent_id', $request->parent_id)
+            ->select('comments.*', 'users.name', 'users.photo')
+            ->orderBy('comment_id', 'DESC')->skip($request->total_loaded_comments)->take(3)->get();
+
+        $page_data['post'] = $post;
+        $page_data['type'] = $request->type;
+        $page_data['post_id'] = $request->post_id;
+        if ($request->parent_id == 0) {
+            $page_data['comments'] = $comments;
+            return view('frontend.main_content.comments', $page_data);
+        } else {
+            $page_data['child_comments'] = $comments;
+            return view('frontend.main_content.child_comments', $page_data);
+        }
+    }
+    public function post_comment(Request $request)
+    {
+        $form_data = $request->all();
+
+        $data['description'] = $form_data['description'];
+
+        if ($form_data['comment_id'] > 0) {
+            $data['updated_at'] = time();
+            Comments::where('comment_id', $form_data['comment_id'])->where('user_id', $this->user->id)->update($data);
+            $comment_id = $form_data['comment_id'];
+        } else {
+            $data['parent_id'] = $form_data['parent_id'];
+            $data['user_id'] = $this->user->id;
+            $data['is_type'] = $form_data['type'];
+            $data['id_of_type'] = $form_data['post_id'];
+            $data['user_reacts'] = json_encode(array());
+            $data['created_at'] = time();
+            $data['updated_at'] = $data['created_at'];
+            $comment_id = Comments::insertGetId($data);
+        }
+
+        $post = Posts::where('posts.post_id', $form_data['post_id'])
+            ->join('users', 'posts.user_id', '=', 'users.id')
+            ->select('posts.*', 'users.name', 'users.photo', 'users.friends', 'posts.created_at as created_at')->get()->first();
+
+        $comments = DB::table('comments')
+            ->join('users', 'comments.user_id', '=', 'users.id')
+            ->where('comments.is_type', $form_data['type'])
+            ->where('comments.comment_id', $comment_id)->get();
+
+        $page_data['post'] = $post;
+        $page_data['type'] = $form_data['type'];
+        $page_data['post_id'] = $form_data['post_id'];
+
+        $total_comments = Comments::where('is_type', $form_data['type'])->where('id_of_type', $form_data['post_id'])->get()->count();
+
+        if ($request->parent_id == 0) {
+            $page_data['comments'] = $comments;
+            return view('frontend.main_content.comments', $page_data);
+        } else {
+            $page_data['child_comments'] = $comments;
+            return view('frontend.main_content.child_comments', $page_data);
+        }
+    }
+
+    public function preview_post(Request $request)
+    {
+
+        //Previw post
+        $posts = Posts::where(function ($query) {
+            $query->where('posts.privacy', '!=', 'private')
+                ->orWhere('posts.user_id', $this->user->id);
+        })
+            ->where('posts.post_id', $request->post_id)
+            ->where('posts.status', 'active')
+            ->join('users', 'posts.user_id', '=', 'users.id')
+            ->select('posts.*', 'users.name', 'users.photo', 'users.friends', 'posts.created_at as created_at')
+            ->take(1)->orderBy('posts.post_id', 'DESC')->get();
+
+        $page_data['posts'] = $posts;
+        $page_data['file_name'] = $request->file_name;
+        $page_data['user_info'] = $this->user;
+        return view('frontend.main_content.preview_post', $page_data);
+    }
+
+    public function post_comment_count(Request $request)
+    {
+        $form_data = $request->all();
+        return $total_child_comments = Comments::where('is_type', $form_data['type'])->where('id_of_type', $form_data['post_id'])->get()->count();
+    }
+
+    public function single_post($id, $type = null)
+    {
+
+        $post = Posts::where('post_id', $id)->first();
+        if (!empty($post)) {
+            $page_data['post'] = $post;
+            $page_data['user_info'] = auth()->user();
+            $page_data['type'] = 'user_post';
+            $page_data['image_id'] = $type;
+            $page_data['view_path'] = 'frontend.main_content.single-post';
+     
+            if (isset($_GET['shared'])) {
+                return view('frontend.main_content.custom_shared_view', $page_data);
+            } else {
+                return view('frontend.index', $page_data);
+            }
+        } else {
+
+            if (isset($_GET['shared'])) {
+                $page_data['post'] = '';
+                return view('frontend.main_content.custom_shared_view', $page_data);
+            } else {
+                $page_data['post'] = '';
+                $page_data['view_path'] = 'frontend.main_content.custom_shared_view';
+                return view('frontend.index', $page_data);
+            }
+        }
+    }
 }

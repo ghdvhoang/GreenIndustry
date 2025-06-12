@@ -155,3 +155,34 @@ Route::controller(Profile::class)->middleware(
 
 });
 
+//Profile controllers group routing
+Route::controller(Profile::class)->middleware('auth', 'verified',
+ )->group(function () {
+    Route::get('/profile', 'profile')->name('profile');
+    Route::get('/profile/load_post_by_scrolling', 'load_post_by_scrolling')->name('profile.load_post_by_scrolling');
+    Route::get('/profile/friends', 'friends')->name('profile.friends');
+
+    Route::get('/profile/photos', 'photos')->name('profile.photos');
+    Route::get('/profile/load_photos', 'load_photos')->name('profile.load_photos');
+
+    Route::any('/profile/album/{action_type?}', 'album')->name('profile.album');
+    Route::get('/profile/load_albums', 'load_albums')->name('profile.load_albums');
+
+    Route::get('/profile/videos', 'videos')->name('profile.videos');
+    Route::get('/profile/load_videos', 'load_videos')->name('profile.load_videos');
+
+    Route::get('/profile/load_my_friends', 'load_my_friends')->name('profile.load_my_friends');
+    Route::get('/profile/load_my_friend_requests', 'load_my_friend_requests')->name('profile.load_my_friend_requests');
+
+    Route::post('/profile/accept_friend_request', 'accept_friend_request')->name('profile.accept_friend_request');
+    Route::get('/profile/delete_friend_request', 'delete_friend_request')->name('profile.delete_friend_request');
+
+    Route::post('/profile/about/{action_type?}', 'about')->name('profile.about');
+    Route::any('/profile/my_info/{action_type?}', 'my_info')->name('profile.my_info');
+    Route::get('/profile/load_photo_and_videos', 'load_photo_and_videos')->name('profile.load_photo_and_videos');
+
+    Route::post('/profile/upload_photo/{photo_type}', 'upload_photo')->name('profile.upload_photo');
+
+    Route::post('/profile/update_profile/', 'update_profile')->name('profile.update_profile');
+
+});

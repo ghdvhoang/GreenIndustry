@@ -26,13 +26,13 @@
                             Route::currentRouteName() == 'profile.videos') active @endif"><a href="{{ route('profile') }}"><img
                                 src="{{ asset('storage/images/man-2.svg') }}"
                                 alt="Profile">{{ get_phrase('Profile') }}</a></li>
-                    {{-- <li class="@if (Route::currentRouteName() == 'groups' ||
+                    <li class="@if (Route::currentRouteName() == 'groups' ||
                             Route::currentRouteName() == 'single.group' ||
                             Route::currentRouteName() == 'group.people.info' ||
                             Route::currentRouteName() == 'group.event.view' ||
                             Route::currentRouteName() == 'single.group.photos') active @endif"><a href="{{ route('groups') }}"><img
                                 src="{{ asset('storage/images/group-2.svg') }}"
-                                alt="Group">{{ get_phrase('Group') }}</a></li> --}}
+                                alt="Group">{{ get_phrase('Group') }}</a></li>
                     {{-- <li class="@if (Route::currentRouteName() == 'pages' ||
                             Route::currentRouteName() == 'single.page' ||
                             Route::currentRouteName() == 'single.page.photos' ||

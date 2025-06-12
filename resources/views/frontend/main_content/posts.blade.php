@@ -273,13 +273,14 @@
                                     src="{{ asset('storage/images/link.png') }}"
                                     alt="">{{ get_phrase('Copy Link') }}</a></li>
                         @if ($post->user_id == auth()->user()->id)
-                            @if ($post->post_type != 'live_streaming' && $post->location == '')
-                                <li>
-                                    <a class="dropdown-item" href="javascript:void(0)"
-                                        onclick="showCustomModal('<?php echo route('edit_post_form', ['id' => $post->id]); ?>', '{{ get_phrase('Edit post') }}', 'lg')">
-                                        <i class="fa-solid fa-pencil"></i> {{ get_phrase('Edit') }}</a>
-                                </li>
-                            @endif
+                            @if ($post->post_type != 'live_streaming' && $post->location == '' && !empty($post->id))
+                                    <li>
+                                        <a class="dropdown-item" href="javascript:void(0)"
+                                            onclick="showCustomModal('{{ route('edit_post_form', ['id' => $post->post_id]) }}', '{{ get_phrase('Edit post') }}', 'lg')">
+                                            <i class="fa-solid fa-pencil"></i> {{ get_phrase('Edit') }}
+                                        </a>
+                                    </li>
+                                @endif
                             <li>
                                 <a class="dropdown-item" href="javascript:void(0)"
                                     onclick="confirmAction('<?php echo route('post.delete', ['post_id' => $post->post_id]); ?>', true)"> <i

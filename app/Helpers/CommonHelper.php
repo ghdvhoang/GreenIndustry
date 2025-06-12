@@ -291,4 +291,18 @@ if (!function_exists('date_formatter')) {
             return date('d', $strtotime) . ' ' . date('M', $strtotime) . ' ' . date('Y', $strtotime) . ', ' . date('h:i:s A', $strtotime);
         }
     }
+
+// folder check and create
+if (!function_exists('uploadTo')) {
+    function uploadTo($folderpath = "")
+    {
+        $path = public_path('storage/' . $folderpath);
+        if (!File::isDirectory($path)) {
+            File::makeDirectory($path, 0777, true, true);
+        }
+        return $path . '/';
+    }
 }
+
+}
+

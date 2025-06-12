@@ -9,9 +9,9 @@
 	--color-1: #9A98A324;
 	--color-2: #f3f3f3;
 	--color-3: #9A98A324;
-	--color-4 :  #4620d5;
+	--color-4 :  #4FB04F;
 	--color-5 :  #d9d9d9;
-	--color-6 :  #5a2ff985;
+	--color-6 :  #4FB04F;
 	--color-9: #f3f3f3;
 	--color-10: #00000080;
 	--side-active: #ececec;
@@ -31,9 +31,9 @@
 }
 
 .default{
-	--color-global :  #5A2FF9;
-	--color-4 :  #4620d5;
-	--color-6 :  #5a2ff985;
+	--color-global :  #4FB04F;
+	--color-4 :  #4FB04F;
+	--color-6 :  #4FB04F;
 }
 .dark{
 	--body--color: #01000B;

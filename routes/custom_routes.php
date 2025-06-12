@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\CustomUserController;
+use App\Http\Controllers\GroupController;
 use App\Http\Controllers\Report\SearchController;
 use Illuminate\Support\Facades\Route;
 
@@ -92,4 +93,39 @@ Route::controller(PaidContent::class)->middleware('auth', 'verified',
     Route::get('/admin/author/pending/report', 'pending_report')->name('pending.report');
     Route::get('/admin/make/payment/{id}', 'author_payout')->name('author.payout');
     Route::get('/admin/payout/delete/{id}', 'delete_payout')->name('admin.delete.payout');
+});
+
+//  group
+Route::controller(GroupController::class)->middleware('auth', 'verified',
+//  'activity', 'prevent-back-history'
+ )->group(function () {
+    Route::get('/groups', 'groups')->name('groups');
+    Route::POST('/group/store', 'store')->name('group.store');
+    Route::post('/update/group/{id}', 'update')->name('group.update');
+    Route::post('/update/coverphoto/group/{id}', 'updatecoverphoto')->name('group.coverphoto');
+    Route::get('/group/peopel/info/{id}', 'peopelinfo')->name('group.people.info');
+    Route::get('group/view/details/{id}', 'single_group')->name('single.group');
+    Route::get('group/photo/view/{id}', 'group_photos')->name('single.group.photos');
+    Route::get('all/peopel/group/view/{id}', 'all_people_group')->name('all.people.group.view');
+    Route::get('/group/event/view/{id}', 'group_event')->name('group.event.view');
+    Route::get('group/join/{id}', 'join')->name('group.join');
+    Route::get('group/rjoin/{id}', 'rjoin')->name('group.rjoin');
+    Route::get('group/search/view', 'search_group')->name('search.group');
+    Route::get('group/all/view', 'group_all_view')->name('all.group.view');
+    Route::get('group/user/create', 'group_user_create')->name('group.user.created');
+    Route::get('group/user/joined', 'group_user_joined')->name('group.user.joined');
+    Route::post('album/add/image', 'add_album_image')->name('add.image.album');
+    Route::post('group/invites/sent', 'sent_invition')->name('group.invition');
+    Route::get('/search_friends_for_inviting', 'search_friends_for_inviting')->name('search_friends_for_inviting');
+    Route::get('/load_groups_by_scrolling', 'load_groups_by_scrolling')->name('load_groups_by_scrolling');
+
+    // New Album List Page
+    Route::get('album/details/list/{identifire}/{album_id}', 'album_details_list')->name('album.details.list');
+
+    Route::get('album/details/page/list/{album_id}/{id}', 'album_details_page_list')->name('album.details.page.list');
+
+    
+    
+
+
 });
