@@ -5,6 +5,13 @@ use App\Http\Controllers\GroupController;
 use App\Http\Controllers\Report\SearchController;
 use Illuminate\Support\Facades\Route;
 
+
+//  follow
+Route::controller(FollowController::class)->middleware('auth', 'verified', 'activity', 'prevent-back-history')->group(function () {
+    Route::get('user/account/follow/{id}', 'follow')->name('user.follow');
+    Route::get('user/account/unfollow/{id}', 'unfollow')->name('user.unfollow');
+});
+
 Route::controller(SearchController::class)->middleware('auth', 'verified',
 //  'activity',
 //   'prevent-back-history'
@@ -123,9 +130,5 @@ Route::controller(GroupController::class)->middleware('auth', 'verified',
     Route::get('album/details/list/{identifire}/{album_id}', 'album_details_list')->name('album.details.list');
 
     Route::get('album/details/page/list/{album_id}/{id}', 'album_details_page_list')->name('album.details.page.list');
-
-    
-    
-
 
 });

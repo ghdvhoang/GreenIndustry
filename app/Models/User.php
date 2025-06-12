@@ -7,6 +7,9 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
+use Illuminate\Support\Facades\Cache;
+
+
 class User extends Authenticatable implements MustVerifyEmail
 {
     use HasApiTokens, HasFactory, Notifiable;
@@ -66,9 +69,9 @@ class User extends Authenticatable implements MustVerifyEmail
 
 
 
-    // public function isOnline(){
-    //     return Cache::has('user-is-online-'.$this->id);
-    // }
+    public function isOnline(){
+        return Cache::has('user-is-online-'.$this->id);
+    }
 
     public static function get_user_image($file_name = "", $optimized = ""){
         $optimized = $optimized.'/';
