@@ -55,7 +55,7 @@ Route::get('language/switch/{language}', function (Request $request, $language) 
 })->name('language.switch');
 
 //Modal controllers group routing
-Route::controller(ModalController::class)->middleware('auth', 'verified', 'activity')->group(function () {
+Route::controller(ModalController::class)->middleware('auth', 'verified')->group(function () {
     Route::any('/load_modal_content/{view_path}', 'common_view_function')->name('load_modal_content');
 });
 

@@ -51,7 +51,6 @@ class GroupController extends Controller
         return view('frontend.index', $page_data);
     }
 
-
     public function store(Request $request){
         $rules = array(
             'image' => 'mimes:jpeg,jpg,png,gif|nullable',
@@ -90,10 +89,6 @@ class GroupController extends Controller
             }
         }
     }
-
-
-
-
 
     public function update(Request $request,$id){
         $rules = array(
@@ -414,11 +409,4 @@ class GroupController extends Controller
     return view('frontend.index', $page_data);
 
   } 
-
-
-
-
-    
-
-
 }

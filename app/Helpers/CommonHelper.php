@@ -65,6 +65,15 @@ if (!function_exists('get_phrase')) {
     }
 }
 
+if (!function_exists('ellipsis')) {
+    function ellipsis($long_string, $max_character = 30)
+    {
+        $long_string = strip_tags($long_string);
+        $short_string = strlen($long_string) > $max_character ? mb_substr($long_string, 0, $max_character) . "..." : $long_string;
+        return $short_string;
+    }
+}
+
 // RANDOM NUMBER GENERATOR FOR ELSEWHERE
 if (!function_exists('random')) {
     function random($length_of_string, $lowercase = false)
@@ -306,3 +315,50 @@ if (!function_exists('uploadTo')) {
 
 }
 
+//get page logo
+if (!function_exists('get_group_logo')) {
+    function get_group_logo($file_name = "", $foldername = "")
+    {
+        //this file comes from another online link as like amazon s3 server
+        if (strpos($file_name, 'https://') !== false) {
+            return $file_name;
+        }
+
+        $foldername = $foldername . '/';
+
+        if (!empty($file_name)) {
+            if (File::exists('public/storage/groups/' . $foldername . $file_name)) {
+                return asset('storage/groups/' . $foldername . $file_name);
+            } else {
+                return asset('storage/groups/' . $foldername . 'default/default.jpg');
+            }
+        } else {
+            return asset('storage/groups/' . $foldername . 'default/default.jpg');
+        }
+    }
+
+}
+
+//get group cover photo
+if (!function_exists('get_group_cover_photo')) {
+    function get_group_cover_photo($file_name = "", $foldername = "")
+    {
+        //this file comes from another online link as like amazon s3 server
+        if (strpos($file_name, 'https://') !== false) {
+            return $file_name;
+        }
+
+        $foldername = $foldername . '/';
+
+        if (!empty($file_name)) {
+            if (File::exists('public/storage/groups/' . $foldername . $file_name)) {
+                return asset('storage/groups/' . $foldername . $file_name);
+            } else {
+                return asset('storage/groups/' . $foldername . 'default/default.jpg');
+            }
+        } else {
+            return asset('storage/groups/' . $foldername . 'default/default.jpg');
+        }
+    }
+
+}

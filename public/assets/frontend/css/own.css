@@ -394,7 +394,7 @@ a.story-entry video {
     transition: all 0s;
 }
 
-.custom-modal-show.custom-modal-effect-1 .custom-modal-content {
+.custom-modal-show .custom-modal-effect-1 .custom-modal-content {
     -webkit-transform: scale(1);
     -ms-transform: scale(1);
     transform: scale(1);

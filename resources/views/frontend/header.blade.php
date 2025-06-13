@@ -128,11 +128,11 @@
                                             href="{{ route('addons.manager') }}">{{ get_phrase('Addons') }}
                                         </a>
                                     </li> --}}
-                                    <li>
+                                    {{-- <li>
                                         <a class="dropdown-item"
                                             href="{{ route('user.settings') }}">{{ get_phrase('Payment Settings') }}
                                         </a>
-                                    </li>
+                                    </li> --}}
 
                                     <li><a class="dropdown-item"
                                             href="{{ route('user.password.change') }}">{{ get_phrase('Change Password') }}</a>

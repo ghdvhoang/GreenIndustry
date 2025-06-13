@@ -2,6 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\FileUploader;
+use App\Models\Group;
+use App\Models\Group_member;
 use App\Models\User;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Http\Request;
@@ -134,5 +137,59 @@ class ApiController extends Controller
         //                     ->withErrors(['email' => __($status)]);
         return $response;
     }
+    public function create_group(Request $request)
+    {
+        $token = $request->bearerToken();
+        $response = array();
 
+        if (isset($token) && $token != '') {
+
+            $user_id = auth('sanctum')->user()->id;
+            $rules = array(
+                'image' => 'mimes:jpeg,jpg,png,gif|nullable',
+                'name' => 'required|max:255',
+                'privacy' => 'required|max:255',
+            );
+            $validator = Validator::make($request->all(), $rules);
+            if ($validator->fails()) {
+                return json_encode(array('validationError' => $validator->getMessageBag()->toArray()));
+            }
+
+            if ($request->image && !empty($request->image)) {
+                $file_name = FileUploader::upload($request->image, 'public/storage/groups/logo', 300);
+            }
+
+            $group = new Group();
+            $group->user_id = $user_id;
+            $group->title = $request->name;
+            $group->subtitle = $request->subtitle;
+            $group->about = $request->about;
+            $group->privacy = $request->privacy;
+            $group->status = $request->status;
+            if ($request->image && !empty($request->image)) {
+                $group->logo = $file_name;
+            }
+            $done = $group->save();
+            if ($done) {
+                $group_member = new Group_member();
+                $group_member->group_id = $group->id;
+                $group_member->user_id = $user_id;
+                $group_member->role = 'admin';
+                $group_member->is_accepted = '1';
+                $done = $group_member->save();
+                if ($done) {
+                    $response['success'] = true;
+                    $response['message'] = 'group create successfully';
+                } else {
+                    $response['success'] = false;
+                    $response['message'] = 'Failed to group page';
+                }
+            }
+        } else {
+            $response['success'] = false;
+            $response['message'] = 'Unauthorized access';
+        }
+        return response()->json($response);
+
+    }
 }

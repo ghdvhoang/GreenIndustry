@@ -34,11 +34,8 @@ class SearchController extends Controller
         }
 
         $page_data['peoples']= User::where('name','Like','%'.$search_param.'%')->limit(50)->get();
-        $page_data['products'] = Marketplace::where('title','like',"%".$search_param."%")->limit(50)->get();
         $page_data['pages'] = Page::where('title','like',"%".$search_param."%")->limit(50)->get();
         $page_data['groups'] = Group::where('title','like',"%".$search_param."%")->where('privacy','public')->limit(50)->get();
-        $page_data['events'] = Event::where('title','like',"%".$search_param."%")->where('privacy','public')->limit(50)->get();
-        $page_data['videos'] = Video::where('title','like',"%".$search_param."%")->where('privacy','public')->limit(50)->get();
         $page_data['view_path'] = 'frontend.search.searchview';
         return view('frontend.index', $page_data);
     }
@@ -59,26 +56,26 @@ class SearchController extends Controller
         return view('frontend.index', $page_data);
     }
 
-    public function search_video(){
-        $search_param = $_GET['search'];
-        $page_data['videos'] = Video::where('title','like',"%".$search_param."%")->where('privacy','public')->limit(100)->get();
-        $page_data['view_path'] = 'frontend.search.video';
-        return view('frontend.index', $page_data);
-    }
+    // public function search_video(){
+    //     $search_param = $_GET['search'];
+    //     $page_data['videos'] = Video::where('title','like',"%".$search_param."%")->where('privacy','public')->limit(100)->get();
+    //     $page_data['view_path'] = 'frontend.search.video';
+    //     return view('frontend.index', $page_data);
+    // }
 
-    public function search_product(){
-        $search_param = $_GET['search'];
-        $page_data['products'] = Marketplace::where('title','like',"%".$search_param."%")->limit(100)->get();
-        $page_data['view_path'] = 'frontend.search.product';
-        return view('frontend.index', $page_data);
-    }
+    // public function search_product(){
+    //     $search_param = $_GET['search'];
+    //     $page_data['products'] = Marketplace::where('title','like',"%".$search_param."%")->limit(100)->get();
+    //     $page_data['view_path'] = 'frontend.search.product';
+    //     return view('frontend.index', $page_data);
+    // }
 
-    public function search_page(){
-        $search_param = $_GET['search'];
-        $page_data['pages'] = Page::where('title','like',"%".$search_param."%")->limit(100)->get();
-        $page_data['view_path'] = 'frontend.search.page';
-        return view('frontend.index', $page_data);
-    }
+    // public function search_page(){
+    //     $search_param = $_GET['search'];
+    //     $page_data['pages'] = Page::where('title','like',"%".$search_param."%")->limit(100)->get();
+    //     $page_data['view_path'] = 'frontend.search.page';
+    //     return view('frontend.index', $page_data);
+    // }
 
     public function search_group(){
         $search_param = $_GET['search'];
@@ -87,10 +84,10 @@ class SearchController extends Controller
         return view('frontend.index', $page_data);
     }
 
-    public function search_event(){
-        $search_param = $_GET['search'];
-        $page_data['events'] = Event::where('title','like',"%".$search_param."%")->where('privacy','public')->limit(100)->get();
-        $page_data['view_path'] = 'frontend.search.event';
-        return view('frontend.index', $page_data);
-    }
+    // public function search_event(){
+    //     $search_param = $_GET['search'];
+    //     $page_data['events'] = Event::where('title','like',"%".$search_param."%")->where('privacy','public')->limit(100)->get();
+    //     $page_data['view_path'] = 'frontend.search.event';
+    //     return view('frontend.index', $page_data);
+    // }
 }

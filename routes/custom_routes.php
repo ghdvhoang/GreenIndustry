@@ -1,11 +1,26 @@
 <?php
 
 use App\Http\Controllers\CustomUserController;
+use App\Http\Controllers\FollowController;
 use App\Http\Controllers\GroupController;
 use App\Http\Controllers\Report\SearchController;
+use App\Http\Controllers\SettingController;
 use Illuminate\Support\Facades\Route;
 
 
+
+
+// Route::controller(ChatController::class)->middleware('auth', 'verified', 'activity', 'prevent-back-history')->group(function () {
+//     Route::get('/chat/inbox/{reciver}/{product?}/', 'chat')->name('chat');
+//     Route::POST('/chat/save', 'chat_save')->name('chat.save');
+//     Route::get('chat/own/remove/{id}', 'remove_chat')->name('remove.chat');
+//     Route::POST('/my_message_react', 'react_chat')->name('react.chat');
+//     Route::get('/chat/profile/search/', 'search_chat')->name('search.chat');
+
+//     Route::get('/chat/inbox/load/data/ajax/', 'chat_load')->name('chat.load');
+//     Route::get('/chat/inbox/read/message/ajax/', 'chat_read_option')->name('chat.read');
+    
+// });
 //  follow
 Route::controller(FollowController::class)->middleware('auth', 'verified', 'activity', 'prevent-back-history')->group(function () {
     Route::get('user/account/follow/{id}', 'follow')->name('user.follow');
@@ -46,6 +61,51 @@ Route::controller(CustomUserController::class)->middleware('auth',
     Route::get('download/media/file/{id}', 'download_mediafile')->name('download.mediafile');
     Route::get('download/media/file/image/{id}', 'download_mediafile_image')->name('download.mediafile.image');
 });
+
+//  setting frontend
+Route::controller(SettingController::class)->group(function () {
+    Route::get('about/page/view/', 'about_view')->name('about.view')->middleware('auth', 'verified', 'prevent-back-history');
+    Route::get('policy/page/view/', 'policy_view')->name('policy.view')->middleware('auth', 'verified', 'prevent-back-history');
+    Route::get('contact/us/view/', 'contact_view')->name('contact.view');
+    Route::POST('contact/us/send/', 'contact_send')->name('contact.send');
+
+    Route::get('term/condition/view/', 'term_view')->name('term.view');
+
+    Route::get('admin/about/page/data/', 'update_about_page_data')->name('admin.about.page.data.view')->middleware('auth', 'verified', 'admin', 'prevent-back-history');
+    Route::POST('admin/about/page/data/update/{id}', 'update_about_page_data_update')->name('admin.about.page.data.update')->middleware('auth', 'verified', 'admin', 'prevent-back-history');
+
+    Route::POST('admin/privacy/page/data/update/{id}', 'update_privacy_page_data_update')->name('admin.privacy.page.data.update')->middleware('auth', 'verified', 'admin', 'prevent-back-history');
+
+    Route::POST('admin/term/page/data/update/{id}', 'update_term_page_data_update')->name('admin.term.page.data.update')->middleware('auth', 'verified', 'admin', 'prevent-back-history');
+
+    Route::get('admin/reported/post/', 'reported_post_to_admin')->name('admin.reported.post.view')->middleware('auth', 'verified', 'admin', 'prevent-back-history');
+    Route::get('admin/reported/post/delete/{id}', 'reported_post_remove_by_admin')->name('admin.reported.post.delete.by.admin')->middleware('auth', 'verified', 'admin', 'prevent-back-history');
+
+    Route::get('admin/live-video/setting/view', 'live_video_edit_form')->name('admin.live-video.view')->middleware('auth', 'verified', 'admin', 'prevent-back-history');
+    Route::post('admin/live-video/setting/update', 'live_video_update')->name('admin.live-video.update')->middleware('auth', 'verified', 'admin', 'prevent-back-history');
+
+    Route::get('admin/smtp/setting/view/', 'smtp_settings_view')->name('admin.smtp.settings.view')->middleware('auth', 'verified', 'admin', 'prevent-back-history');
+    Route::POST('admin/smtp/setting/save/{id}', 'smtp_settings_save')->name('admin.smtp.settings.view.save')->middleware('auth', 'verified', 'admin', 'prevent-back-history');
+
+    // system settings
+    Route::get('admin/system/setting/view/', 'system_settings_view')->name('admin.system.settings.view')->middleware('auth', 'verified', 'admin', 'prevent-back-history');
+    Route::POST('admin/system/setting/save/', 'system_settings_save')->name('admin.system.settings.view.save')->middleware('auth', 'verified', 'admin', 'prevent-back-history');
+    Route::POST('admin/system/setting/logo/save/', 'system_settings_logo_save')->name('admin.system.settings.logo.view.save')->middleware('auth', 'verified', 'admin', 'prevent-back-history');
+
+    Route::get('admin/settings/amazon_s3', 'amazon_s3')->name('admin.settings.amazon_s3');
+    Route::post('admin/settings/amazon_s3/update', 'amazon_s3_update')->name('admin.settings.amazon_s3.update');
+
+
+
+    // Admin Color Save
+    Route::get('admin/system/settings/color/save/{themeColor}', 'system_settings_color_save')->name('admin.system.settings.color.save')->middleware('auth', 'verified', 'admin', 'prevent-back-history');
+
+    //Zitsi  Settings
+     Route::get('admin/zitsi-video/setting/view', 'zitsi_video_edit_form')->name('admin.zitsi-video.view')->middleware('auth', 'verified', 'admin', 'prevent-back-history');
+     Route::post('admin/jitsi/live/settings/update', 'zitsi_live_video_update')->name('admin.zitsi.live.settings.update');
+
+});
+
 
 Route::controller(PaidContent::class)->middleware('auth', 'verified',
 //  'activity', 'prevent-back-history'

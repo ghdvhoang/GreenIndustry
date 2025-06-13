@@ -1,8 +1,10 @@
 
             <div class="widget ng_widget">
                 <div class="w_btn">
-                    <button class="btn common_btn d-block w-100" onclick="showCustomModal('{{route('load_modal_content', ['view_path' => 'frontend.groups.create'])}}', '{{get_phrase(' Create New Group')}}');" data-bs-toggle="modal"
-                        data-bs-target="#newGroup"><i class="fa fa-plus-circle"></i>{{get_phrase(' Create New Group')}}</button>
+                    <button class="btn common_btn d-block w-100"
+                     onclick="showCustomModal('{{route('load_modal_content', ['view_path' => 'frontend.groups.create'])}}', '{{get_phrase(' Create New Group')}}');" data-bs-toggle="modal"
+                        
+                     data-bs-target="#newGroup"><i class="fa fa-plus-circle"></i>{{get_phrase(' Create New Group')}}</button>
                  </div>
                 <div class="gr-search">
                     <h3 class="h6">{{ get_phrase('Groups')}}</h3>

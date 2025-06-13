@@ -138,7 +138,7 @@
     <!-- Main End -->
 
     <!-- Common modals -->
-    {{-- @include('frontend.modal') --}}
+    @include('frontend.modal')
 
 
 
