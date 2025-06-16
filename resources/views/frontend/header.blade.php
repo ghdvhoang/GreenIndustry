@@ -56,7 +56,7 @@
                                 <a href="{{ route('profile.friends') }}" class="notification-button"><i
                                         class="fa-solid fa-user-group"></i></a>
                             </div>
-                            {{-- @php
+                            @php
                                 $last_msg = \App\Models\Chat::where('sender_id', auth()->user()->id)
                                     ->orWhere('reciver_id', auth()->user()->id)
                                     ->orderBy('id', 'DESC')
@@ -73,8 +73,8 @@
                                 $unread_msg = \App\Models\Chat::where('reciver_id', auth()->user()->id)
                                     ->where('read_status', '0')
                                     ->count();
-                            @endphp --}}
-                            {{-- <div class="inbox-control">
+                            @endphp
+                            <div class="inbox-control">
                                 <a href="@if(isset($msg_to)) {{ route('chat', $msg_to) }} @else {{route('chat','all')}} @endif"
                                     class="message_custom_button position-relative">
                                     <i class="fa-brands fa-rocketchat"></i>
@@ -85,8 +85,8 @@
                                         </span>
                                     @endif
                                 </a>
-                            </div> --}}
-                            {{-- @php
+                            </div>
+                            @php
                                 $unread_notification = \App\Models\Notification::where('reciver_user_id', auth()->user()->id)
                                     ->where('status', '0')
                                     ->count();
@@ -101,7 +101,7 @@
                                         </span>
                                     @endif
                                 </a>
-                            </div> --}}
+                            </div>
                             <div class="profile-control dropdown">
                                 <button class="dropdown-toggle" type="button" id="dropdownMenuButton1"
                                     data-bs-toggle="dropdown" aria-expanded="false">

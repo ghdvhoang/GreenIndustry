@@ -53,9 +53,11 @@
             url: url,
             success: function(response) {
                 console.log(response);
+                $('#customModalBody .custom-modal-body-loader').hide();
                 $('#customModalBody').html(response);
             }
         });
+        
     }
 
     //Ajax action start

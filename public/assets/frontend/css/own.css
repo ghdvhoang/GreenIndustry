@@ -389,7 +389,6 @@ a.story-entry video {
     -webkit-transform: scale(0.7);
     -ms-transform: scale(0.7);
     transform: scale(0.7);
-    opacity: 0;
     -webkit-transition: all 0s;
     transition: all 0s;
 }

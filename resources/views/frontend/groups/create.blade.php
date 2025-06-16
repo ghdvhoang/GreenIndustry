@@ -46,6 +46,8 @@
         </select>
     </div>
     <button type="submit" class="w-100 mt-3 btn common_btn">{{ get_phrase('Create Group') }}</button>
+
+    
 </form>
 
 
@@ -53,6 +55,8 @@
 <script src="{{ asset('assets/frontend/js/jquery.nice-select.min.js') }}"></script>
 <script>
     $('document').ready(function(){
-        $(".select").niceSelect();
+         setTimeout(function () {
+            $(".select:not(.nice-initialized)").niceSelect().addClass('nice-initialized');
+        }, 100);
     });
 </script>

@@ -1,8 +1,10 @@
 <?php
 
+use App\Http\Controllers\ChatController;
 use App\Http\Controllers\CustomUserController;
 use App\Http\Controllers\FollowController;
 use App\Http\Controllers\GroupController;
+use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\Report\SearchController;
 use App\Http\Controllers\SettingController;
 use Illuminate\Support\Facades\Route;
@@ -10,19 +12,19 @@ use Illuminate\Support\Facades\Route;
 
 
 
-// Route::controller(ChatController::class)->middleware('auth', 'verified', 'activity', 'prevent-back-history')->group(function () {
-//     Route::get('/chat/inbox/{reciver}/{product?}/', 'chat')->name('chat');
-//     Route::POST('/chat/save', 'chat_save')->name('chat.save');
-//     Route::get('chat/own/remove/{id}', 'remove_chat')->name('remove.chat');
-//     Route::POST('/my_message_react', 'react_chat')->name('react.chat');
-//     Route::get('/chat/profile/search/', 'search_chat')->name('search.chat');
+Route::controller(ChatController::class)->middleware('auth', 'verified')->group(function () {
+    Route::get('/chat/inbox/{reciver}/{product?}/', 'chat')->name('chat');
+    Route::POST('/chat/save', 'chat_save')->name('chat.save');
+    Route::get('chat/own/remove/{id}', 'remove_chat')->name('remove.chat');
+    Route::POST('/my_message_react', 'react_chat')->name('react.chat');
+    Route::get('/chat/profile/search/', 'search_chat')->name('search.chat');
 
-//     Route::get('/chat/inbox/load/data/ajax/', 'chat_load')->name('chat.load');
-//     Route::get('/chat/inbox/read/message/ajax/', 'chat_read_option')->name('chat.read');
+    Route::get('/chat/inbox/load/data/ajax/', 'chat_load')->name('chat.load');
+    Route::get('/chat/inbox/read/message/ajax/', 'chat_read_option')->name('chat.read');
     
-// });
+});
 //  follow
-Route::controller(FollowController::class)->middleware('auth', 'verified', 'activity', 'prevent-back-history')->group(function () {
+Route::controller(FollowController::class)->middleware('auth', 'verified')->group(function () {
     Route::get('user/account/follow/{id}', 'follow')->name('user.follow');
     Route::get('user/account/unfollow/{id}', 'unfollow')->name('user.unfollow');
 });
@@ -104,6 +106,23 @@ Route::controller(SettingController::class)->group(function () {
      Route::get('admin/zitsi-video/setting/view', 'zitsi_video_edit_form')->name('admin.zitsi-video.view')->middleware('auth', 'verified', 'admin', 'prevent-back-history');
      Route::post('admin/jitsi/live/settings/update', 'zitsi_live_video_update')->name('admin.zitsi.live.settings.update');
 
+});
+
+Route::controller(NotificationController::class)->middleware('auth', 'verified')->group(function () {
+    Route::get('/all/notification', 'notifications')->name('notifications');
+    Route::get('/accept/friend/request/notification/{id}', 'accept_friend_notification')->name('accept.friend.request.from.notification');
+    Route::get('/decline/friend/request/notification/{id}', 'decline_friend_notification')->name('decline.friend.request.from.notification');
+
+    Route::get('/accept/group/request/notification/{id}/{group_id}', 'accept_group_notification')->name('accept.group.request.from.notification');
+    Route::get('/decline/group/request/notification/{id}/{group_id}', 'decline_group_notification')->name('decline.group.request.from.notification');
+
+    Route::get('/accept/event/request/notification/{id}/{event_id}', 'accept_event_notification')->name('accept.event.request.from.notification');
+    Route::get('/decline/event/request/notification/{id}/{event_id}', 'decline_event_notification')->name('decline.event.request.from.notification');
+
+    Route::get('/mark/as/read/notification/{id}', 'mark_as_read')->name('mark.as.read.notification');
+    //fundraiser
+    // Route::get('/accept/fundraiser/request/notification/{id}/{fundraiser_id}', 'accept_fundraiser_notification')->name('accept.fundraiser.request.from.notification');
+    // Route::get('/decline/fundraiser/request/notification/{id}/{fundraiser_id}', 'decline_fundraiser_notification')->name('decline.fundraiser.request.from.notification');
 });
 
 
