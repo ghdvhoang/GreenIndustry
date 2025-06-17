@@ -1,4 +1,23 @@
 <?php
+$hostname = isset($_SERVER['HTTP_HOST']) ? $_SERVER['HTTP_HOST'] : null;
+$script_name = isset($_SERVER['SCRIPT_NAME']) ? $_SERVER['SCRIPT_NAME'] : null;
+
+if (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on') {
+    $host_type = "https://";
+} else {
+    $host_type = "http://";
+}
+
+//check is it valet server or laravel inbuilt server
+if ($hostname == '127.0.0.1:8000' || str_contains($script_name, 'valet/')) {
+    $asset_url = null;
+} else {
+    $asset_url = str_replace("index.php", "", $script_name) . 'public';
+}
+
+$app_url = $host_type . $hostname;
+
+
 
 return [
 
@@ -122,6 +141,55 @@ return [
         'driver' => env('APP_MAINTENANCE_DRIVER', 'file'),
         'store' => env('APP_MAINTENANCE_STORE', 'database'),
     ],
+    
+    'providers' => [
+
+        /*
+         * Laravel Framework Service Providers...
+         */
+        Illuminate\Auth\AuthServiceProvider::class,
+        Illuminate\Broadcasting\BroadcastServiceProvider::class,
+        Illuminate\Bus\BusServiceProvider::class,
+        Illuminate\Cache\CacheServiceProvider::class,
+        Illuminate\Foundation\Providers\ConsoleSupportServiceProvider::class,
+        Illuminate\Cookie\CookieServiceProvider::class,
+        Illuminate\Database\DatabaseServiceProvider::class,
+        Illuminate\Encryption\EncryptionServiceProvider::class,
+        Illuminate\Filesystem\FilesystemServiceProvider::class,
+        Illuminate\Foundation\Providers\FoundationServiceProvider::class,
+        Illuminate\Hashing\HashServiceProvider::class,
+        Illuminate\Mail\MailServiceProvider::class,
+        Illuminate\Notifications\NotificationServiceProvider::class,
+        Illuminate\Pagination\PaginationServiceProvider::class,
+        Illuminate\Pipeline\PipelineServiceProvider::class,
+        Illuminate\Queue\QueueServiceProvider::class,
+        Illuminate\Redis\RedisServiceProvider::class,
+        Illuminate\Auth\Passwords\PasswordResetServiceProvider::class,
+        Illuminate\Session\SessionServiceProvider::class,
+        Illuminate\Translation\TranslationServiceProvider::class,
+        Illuminate\Validation\ValidationServiceProvider::class,
+        Illuminate\View\ViewServiceProvider::class,
+        // Jorenvh\Share\Providers\ShareServiceProvider::class,
+        // Intervention\Image\ImageServiceProvider::class,
+        // Flasher\Laravel\FlasherServiceProvider::class,
+        // Anand\LaravelPaytmWallet\PaytmWalletServiceProvider::class,
+
+        /*
+         * Package Service Providers...
+         */
+
+        /*
+         * Application Service Providers...
+         */
+        // App\Providers\AppServiceProvider::class,
+        // App\Providers\AuthServiceProvider::class,
+        // App\Providers\BroadcastServiceProvider::class,
+        // App\Providers\EventServiceProvider::class,
+        // App\Providers\RouteServiceProvider::class,
+        // App\Providers\CommonServiceProvider::class,
+        // Yajra\DataTables\DataTablesServiceProvider::class,
+
+    ],
 
     'aliases' => [
 
@@ -165,7 +233,7 @@ return [
         'Validator' => Illuminate\Support\Facades\Validator::class,
         'View' => Illuminate\Support\Facades\View::class,
         // 'Share' => Jorenvh\Share\ShareFacade::class,
-        // 'Image' => Intervention\Image\Facades\Image::class,
+        'Image' => Intervention\Image\Facades\Image::class,
         // 'Flasher' => Flasher\Laravel\Facade\Flasher::class,
         // 'DataTables' => Yajra\DataTables\Facades\DataTables::class,
         // 'PaytmWallet' => Anand\LaravelPaytmWallet\Facades\PaytmWallet::class,

@@ -1,7 +1,7 @@
 <?php
 
 namespace App\Http\Controllers;
-
+use App\Events\MessageSent;
 use App\Models\User;
 use App\Models\Chat;
 use App\Models\Friendships;
@@ -81,6 +81,7 @@ class ChatController extends Controller
                 $chat->thumbsup = $request->thumbsup;
                 $chat->file ='1';
                 $chat->save();
+                broadcast(new MessageSent($chat))->toOthers();
                 $last_chat_id = $chat->id;
 
                 if(is_array($request->multiple_files) && $request->multiple_files[0] != null){

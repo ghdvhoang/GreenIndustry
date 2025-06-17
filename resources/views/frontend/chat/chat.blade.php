@@ -1,7 +1,7 @@
 
 <div class="message-box chat_control bg-white border radius-8">
     @if(!empty($reciver_data))
-    <div class="modal-header d-flex bg-secondary">
+    <div class="modal-header d-flex">
        
         <div class="avatar d-flex">
             <a href="#" class="d-flex align-items-center">
@@ -176,11 +176,11 @@
         });
 
 
-    // $(document).ready(function() {
-    //     setTimeout(function() {
-    //         $('#ChatmessageField').val('');
-    //     }, 2000);
-    // });
+    $(document).ready(function() {
+        setTimeout(function() {
+            $('#ChatmessageField').val('');
+        }, 2000);
+    });
 
 
 
