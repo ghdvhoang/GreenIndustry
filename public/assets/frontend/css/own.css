@@ -1050,19 +1050,19 @@ select.form-control {
     padding: 10px 8px;
 }
 
-
-.login-btns a{
-    background: #31A24C !important;
+.login-btns a {
+    background: #219653 !important;
     padding: 10px 32px;
     color: #fff !important;
-    border: 1px solid #ffffff !important;
+    border: 1px solid #219653 !important;
     font-size: 18px;
 }
-.login-btns a.active, .login-btns a:hover, .login-btns a:focus{
-    background: #ff7856 !important;
-    padding: 10px 32px;
+.login-btns a.active,
+.login-btns a:hover,
+.login-btns a:focus {
+    background: #27ae60 !important;
     color: #fff !important;
-    border: 1px solid #ff7856 !important;
+    border: 1px solid #27ae60 rtant;
     font-size: 18px;
 }
 
@@ -1144,7 +1144,7 @@ select.form-control {
 }
 
 
-/* 404 Area Start 
+/* 404 Area Start
 ********************************************/
 .error-box{
     font-family: 'Segoe UI';
@@ -1424,7 +1424,7 @@ body.login .form-group input{
 
 
 /*Shourav's css*/
-/****** New Css Start 
+/****** New Css Start
 ****************************************/
 .story-control{
     position: relative;
@@ -1529,7 +1529,7 @@ body.login .form-group input{
 .avatar,.sponsor-txt{
     display: table;
 }
-/****** New Css End 
+/****** New Css End
 ****************************************/
 @media all and (max-width:767px){
     .post-options {

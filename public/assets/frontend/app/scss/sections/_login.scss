@@ -5,26 +5,29 @@
 }
 
 .login-btns a {
-    background: #31A24C;
+    background:  #219653;
     padding   : 10px 32px;
     color     : #fff;
-    border    : 1px solid #FF7856;
+    border    : 1px solid #219653;
     font-size : 18px;
 
     &:hover {
-        color: $white;
+        background: darken(#219653, 5%);
+        color: #fff;
+        border: 1px solid darken(#219653, 5%);
     }
 }
 
 .login-btns a:last-child {
     background : transparent;
-    border     : 1px solid;
+    border     : 1px solid #219653; // đổi sang màu xanh
+    color      : #219653;           // đổi màu chữ sang xanh
     margin-left: 10px;
 
     &:hover {
-        background-color: #FF7856;
-        color           : $white;
-        border          : 1px solid #FF7856;
+        background-color: #219653;  // hover nền xanh
+        color           : #fff;     // chữ trắng khi hover
+        border          : 1px solid #219653;
     }
 }
 
