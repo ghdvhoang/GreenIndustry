@@ -168,7 +168,7 @@ class MainController extends Controller
             //Data validation
 
             $rules = array('multiple_files.*' => 'mimes:jpeg,png,jpg,gif,svg,mp4,mov,wmv,avi,webm|max:500000');
-            // $rules = array('multiple_files.*' => 'mimes:mp4,mov,wmv,avi,WEBM,mkv|max:20048');
+            $rules = array('multiple_files.*' => 'mimes:mp4,mov,wmv,avi,WEBM,mkv|max:20048');
             $validator = Validator::make($request->all(), $rules);
             if ($validator->fails()) {
                 $validation_errors = $validator->getMessageBag()->toArray();
@@ -302,9 +302,9 @@ class MainController extends Controller
                     $file_name = FileUploader::upload($media_file, 'public/storage/post/images/' . $file_name . '.' . $file_extention, 1000, null, 300);
                     $file_type = 'image';
                 }
-                // $file_name = $file_name . '.' . $file_extention;
+                $file_name = $file_name . '.' . $file_extention;
 
-                $media_file_data = array('user_id' => auth()->user()->id, 'post_id' => $post_id, 'file_name' => $file_name, 'file_type' => $file_type, 'privacy' => $request->privacy);
+                $media_file_data = array('user_id' => $this->user->id, 'post_id' => $post_id, 'file_name' => $file_name, 'file_type' => $file_type, 'privacy' => $request->privacy);
 
                 if (isset($request->page_id) && !empty($request->page_id)) {
                     $media_file_data['page_id'] = $request->page_id;
@@ -318,23 +318,23 @@ class MainController extends Controller
             }
         }
 
-        if ($data['post_type'] == 'live_streaming') {
-            //Live streaming
-            $live['publisher'] = $data['publisher'];
-            $live['publisher_id'] = $post_id;
-            $live['user_id'] = auth()->user()->id;
-            $live['details'] = json_encode(['link' => url('/streaming/live/' . $post_id), 'status' => TRUE]);
-            $live['created_at'] = date('Y-m-d H:i:s', time());
-            $live['updated_at'] = $live['created_at'];
+        // if ($data['post_type'] == 'live_streaming') {
+        //     //Live streaming
+        //     $live['publisher'] = $data['publisher'];
+        //     $live['publisher_id'] = $post_id;
+        //     $live['user_id'] = auth()->user()->id;
+        //     $live['details'] = json_encode(['link' => url('/streaming/live/' . $post_id), 'status' => TRUE]);
+        //     $live['created_at'] = date('Y-m-d H:i:s', time());
+        //     $live['updated_at'] = $live['created_at'];
   
-            // Live_streamings::insert($live);
-            $response = array('open_new_tab' => url('/streaming/live/' . $post_id), 'reload' => 0, 'status' => 1, 'function' => 0, 'messageShowOn' => '[name=about]', 'message' => get_phrase('Post has been added to your timeline'));
-        } else {
-            //Ajax flush message
-            Session::flash('success_message', get_phrase('Your post has been published'));
-            $response = array('reload' => 1);
-        }
-        return json_encode($response);
+        //     // Live_streamings::insert($live);
+        //     $response = array('open_new_tab' => url('/streaming/live/' . $post_id), 'reload' => 0, 'status' => 1, 'function' => 0, 'messageShowOn' => '[name=about]', 'message' => get_phrase('Post has been added to your timeline'));
+        // } else {
+        //     //Ajax flush message
+        //     Session::flash('success_message', get_phrase('Your post has been published'));
+        //     $response = array('reload' => 1);
+        // }
+        // return json_encode($response);
     }
 
     public function edit_post_form($id)
@@ -415,8 +415,6 @@ class MainController extends Controller
         
             $data['description'] = nl2br($request->description);
         
-            
-        
             if (!empty($matchesUrls[0])) {
                 foreach ($matchesUrls[0] as $url) {
                     $urlLink = '<a href="' . $url . '" class="url-link hashtag-link" target="_blank">' . $url . '</a>';
@@ -439,13 +437,6 @@ class MainController extends Controller
             $data['description'] = '';
             $data['hashtag'] = '';
         }
-
-
-
-
-
-
-
 
         $data['updated_at'] = time();
 
@@ -482,7 +473,7 @@ class MainController extends Controller
                 }
                 $file_name = $file_name . '.' . $file_extention;
 
-                $media_file_data = array('user_id' => auth()->user()->id, 'post_id' => $id, 'file_name' => $file_name, 'file_type' => $file_type, 'privacy' => $request->privacy);
+                $media_file_data = array('user_id' => Auth::user()->id, 'post_id' => $id, 'file_name' => $file_name, 'file_type' => $file_type, 'privacy' => $request->privacy);
 
                 if (isset($request->page_id) && !empty($request->page_id)) {
                     $media_file_data['page_id'] = $request->page_id;
@@ -673,7 +664,7 @@ class MainController extends Controller
         $post = Posts::where('post_id', $id)->first();
         if (!empty($post)) {
             $page_data['post'] = $post;
-            $page_data['user_info'] = auth()->user();
+            $page_data['user_info'] = Auth::user();
             $page_data['type'] = 'user_post';
             $page_data['image_id'] = $type;
             $page_data['view_path'] = 'frontend.main_content.single-post';
