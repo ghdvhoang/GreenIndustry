@@ -147,6 +147,7 @@ return [
         /*
          * Laravel Framework Service Providers...
          */
+
         Illuminate\Auth\AuthServiceProvider::class,
         Illuminate\Broadcasting\BroadcastServiceProvider::class,
         Illuminate\Bus\BusServiceProvider::class,
@@ -169,8 +170,8 @@ return [
         Illuminate\Translation\TranslationServiceProvider::class,
         Illuminate\Validation\ValidationServiceProvider::class,
         Illuminate\View\ViewServiceProvider::class,
+        Intervention\Image\ImageServiceProvider::class,
         // Jorenvh\Share\Providers\ShareServiceProvider::class,
-        // Intervention\Image\ImageServiceProvider::class,
         // Flasher\Laravel\FlasherServiceProvider::class,
         // Anand\LaravelPaytmWallet\PaytmWalletServiceProvider::class,
 
@@ -181,11 +182,11 @@ return [
         /*
          * Application Service Providers...
          */
-        // App\Providers\AppServiceProvider::class,
-        // App\Providers\AuthServiceProvider::class,
-        // App\Providers\BroadcastServiceProvider::class,
-        // App\Providers\EventServiceProvider::class,
-        // App\Providers\RouteServiceProvider::class,
+        App\Providers\AppServiceProvider::class,
+        App\Providers\AuthServiceProvider::class,
+        App\Providers\BroadcastServiceProvider::class,
+        App\Providers\EventServiceProvider::class,
+        App\Providers\RouteServiceProvider::class,
         // App\Providers\CommonServiceProvider::class,
         // Yajra\DataTables\DataTablesServiceProvider::class,
 
@@ -232,8 +233,8 @@ return [
         'URL' => Illuminate\Support\Facades\URL::class,
         'Validator' => Illuminate\Support\Facades\Validator::class,
         'View' => Illuminate\Support\Facades\View::class,
-        // 'Share' => Jorenvh\Share\ShareFacade::class,
         'Image' => Intervention\Image\Facades\Image::class,
+        // 'Share' => Jorenvh\Share\ShareFacade::class,
         // 'Flasher' => Flasher\Laravel\Facade\Flasher::class,
         // 'DataTables' => Yajra\DataTables\Facades\DataTables::class,
         // 'PaytmWallet' => Anand\LaravelPaytmWallet\Facades\PaytmWallet::class,
