@@ -5,9 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Intervention\Image\Facades\Image;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
-use DB, Session;
 
 class FileUploader extends Model
 {
@@ -27,9 +25,15 @@ class FileUploader extends Model
                 $file_name = end($uploaded_path_arr);
                 $upload_to = str_replace('/'.$file_name,"",$upload_to);
                 if(!is_dir($upload_to)){
-                    return "This path doesn't exist!";
+                    mkdir($upload_to, 0755, true);
                 }
             }
+            // Make sure the upload directory exists and is writable
+            if (!is_dir($upload_to)) {
+                mkdir($upload_to, 0755, true);
+            }
+            // Make sure the path has a trailing slash
+            $upload_to = rtrim($upload_to, '/') . '/';
 
             if($width == null){
                 $uploaded_file->move($upload_to, $file_name);

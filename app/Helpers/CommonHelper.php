@@ -4,12 +4,192 @@
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\File;
 
-
 if (!function_exists('addon_status')) {
     function addon_status($unique_identifier = '')
     {
         $result = DB::table('addons')->where('unique_identifier', $unique_identifier)->value('status');
         return $result;
+    }
+}
+// Global Settings
+if (!function_exists('get_image')) {
+    function get_image($url = null)
+    {
+        if (is_file(public_path($url)) && file_exists(public_path($url))) {
+            return asset($url);
+        } elseif ($url != null) {
+            $url_arr = explode('/', $url);
+            $file_name = $url_arr[count($url_arr) - 1];
+            if (empty($file_name)) {
+                $url = $url . 'default/default.png';
+            } else {
+                $url = str_replace($file_name, 'default/default.png', $url);
+            }
+            return asset($url);
+        } else {
+            return asset($url);
+        }
+    }
+}
+// Global Settings
+if (!function_exists('remove_file')) {
+    function remove_file($url = null)
+    {
+        $url = $url = str_replace('optimized/', '', $url);
+        $url_arr = explode('/', $url);
+        $file_name = $url_arr[count($url_arr) - 1];
+
+        if (is_file($url) && file_exists($url) && !empty($file_name)) {
+            unlink($url);
+
+            $url = str_replace($file_name, 'optimized/' . $file_name, $url);
+            if (is_file($url) && file_exists($url)) {
+                unlink($url);
+            }
+        }
+    }
+}
+
+//All common helper functions
+if (!function_exists('get_user_image')) {
+    function get_user_image($file_name_or_user_id = "", $optimized = "")
+    {
+
+        $optimized = $optimized . '/';
+        if ($file_name_or_user_id == '') {
+            $file_name_or_user_id = 'default.png';
+        }
+        if (is_numeric($file_name_or_user_id)) {
+            $user_id = $file_name_or_user_id;
+            $file_name = "";
+        } else {
+            $user_id = "";
+            $file_name = $file_name_or_user_id;
+        }
+
+        if ($user_id > 0) {
+            $user_id = $file_name_or_user_id;
+            $file_name = DB::table('users')->where('id', $user_id)->value('photo');
+
+            //this file comes from another online link as like amazon s3 server
+            if (strpos($file_name, 'https://') !== false) {
+                return $file_name;
+            }
+
+            if (File::exists(public_path('storage/userimage/' . $optimized . $file_name)) && is_file(public_path('storage/userimage/' . $optimized . $file_name))) {
+                return asset('storage/userimage/' . $optimized . $file_name);
+            } else {
+                return asset('storage/userimage/default.png');
+            }
+        } elseif (File::exists(public_path('storage/userimage/' . $optimized . $file_name)) && is_file(public_path('storage/userimage/' . $optimized . $file_name))) {
+            return asset('storage/userimage/' . $optimized . $file_name);
+        } elseif (strpos($file_name, 'https://') !== false) {
+            //this file comes from another online link as like amazon s3 server
+            return $file_name;
+        } else {
+            return asset('storage/userimage/default.png');
+        }
+    }
+}
+
+if (!function_exists('get_cover_photo')) {
+    function get_cover_photo($file_name_or_user_id = '', $optimized = "")
+    {
+
+        $optimized = $optimized . '/';
+        if ($file_name_or_user_id == '') {
+            $file_name_or_user_id = Auth()->user()->photo;
+        }
+        if (is_numeric($file_name_or_user_id)) {
+            $user_id = $file_name_or_user_id;
+            $file_name = "";
+        } else {
+            $user_id = "";
+            $file_name = $file_name_or_user_id;
+        }
+
+        if ($user_id > 0) {
+            $user_id = $file_name_or_user_id;
+            $file_name = DB::table('users')->where('id', $user_id)->value('photo');
+
+            //this file comes from another online link as like amazon s3 server
+            if (strpos($file_name, 'https://') !== false) {
+                return $file_name;
+            }
+
+            if (File::exists(public_path('storage/cover_photo/' . $optimized . $file_name)) && is_file(public_path('storage/cover_photo/' . $optimized . $file_name))) {
+                return asset('storage/cover_photo/' . $optimized . $file_name);
+            } else {
+                return asset('storage/cover_photo/default.jpg');
+            }
+        } elseif (File::exists(public_path('storage/cover_photo/' . $optimized . $file_name)) && is_file(public_path('storage/cover_photo/' . $optimized . $file_name))) {
+            return asset('storage/cover_photo/' . $optimized . $file_name);
+        } elseif (strpos($file_name, 'https://') !== false) {
+            //this file comes from another online link as like amazon s3 server
+            return $file_name;
+        } else {
+            return asset('storage/cover_photo/default.jpg');
+        }
+    }
+}
+
+if (!function_exists('get_album_thumbnail')) {
+    function get_album_thumbnail($id = '', $optimized = "")
+    {
+        $optimized = $optimized . '/';
+        $file_name = DB::table('albums')->where('id', $id)->value('thumbnail');
+
+        //this file comes from another online link as like amazon s3 server
+        if (strpos($file_name, 'https://') !== false) {
+            return $file_name;
+        }
+
+        if (!empty($file_name) && File::exists(public_path('storage/thumbnails/album/' . $optimized . $file_name))) {
+            return asset('storage/thumbnails/album/' . $optimized . $file_name);
+        }
+
+        $file_name = DB::table('media_files')->where('album_id', $id)->orderBy('id', 'DESC')->value('file_name');
+        if (!empty($file_name) && File::exists(public_path('storage/post/images/' . $optimized . $file_name))) {
+            return asset('storage/post/images/' . $optimized . $file_name);
+        } else {
+            return asset('storage/thumbnails/album/default.jpg');
+        }
+    }
+}
+
+if (!function_exists('get_post_image')) {
+    function get_post_image($file_name = '', $optimized = "")
+    {
+        //this file comes from another online link as like amazon s3 server
+        if (strpos($file_name, 'https://') !== false) {
+            return $file_name;
+        }
+
+        $optimized = $optimized . '/';
+        if (File::exists(public_path('storage/post/images/' . $optimized . $file_name)) && is_file(public_path('storage/post/images/' . $optimized . $file_name))) {
+            return asset('storage/post/images/' . $optimized . $file_name);
+        } else {
+            return asset('storage/post/images/default.jpg');
+        }
+    }
+}
+
+if (!function_exists('get_post_video')) {
+    function get_post_video($file_name = '', $optimized = "")
+    {
+        //this file comes from another online link as like amazon s3 server
+        if (strpos($file_name, 'https://') !== false) {
+            return $file_name;
+        }
+
+        if ($optimized != "") {
+            $optimized = $optimized . '/';
+        }
+        if (File::exists(public_path('storage/post/videos/' . $optimized . $file_name))) {
+            return asset('storage/post/videos/' . $optimized . $file_name);
+        } else {
+            return asset('storage/post/videos/default.jpg');
+        }
     }
 }
 
@@ -65,170 +245,6 @@ if (!function_exists('get_phrase')) {
     }
 }
 
-if (!function_exists('ellipsis')) {
-    function ellipsis($long_string, $max_character = 30)
-    {
-        $long_string = strip_tags($long_string);
-        $short_string = strlen($long_string) > $max_character ? mb_substr($long_string, 0, $max_character) . "..." : $long_string;
-        return $short_string;
-    }
-}
-
-// RANDOM NUMBER GENERATOR FOR ELSEWHERE
-if (!function_exists('random')) {
-    function random($length_of_string, $lowercase = false)
-    {
-        // String of all alphanumeric character
-        $str_result = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz';
-
-        // Shufle the $str_result and returns substring
-        // of specified length
-        $randVal = substr(str_shuffle($str_result), 0, $length_of_string);
-        if ($lowercase) {
-            $randVal = strtolower($randVal);
-        }
-        return $randVal;
-    }
-}
-
-if (!function_exists('get_settings')) {
-    function get_settings($type = "", $return_type = "")
-    {
-        $value = DB::table('settings')->where('type', $type)->value('description');
-        if ($return_type === true) {
-            return json_decode($value, true);
-        } elseif ($return_type === 'decode') {
-            return json_decode($value, true);
-        } elseif ($return_type == "object") {
-            return json_decode($value);
-        } else {
-            return $value;
-        }
-    }
-}
-
-//All common helper functions
-if (!function_exists('get_user_image')) {
-    function get_user_image($file_name_or_user_id = "", $optimized = "")
-    {
-
-        $optimized = $optimized . '/';
-        if ($file_name_or_user_id == '') {
-            $file_name_or_user_id = 'default.png';
-        }
-        if (is_numeric($file_name_or_user_id)) {
-            $user_id = $file_name_or_user_id;
-            $file_name = "";
-        } else {
-            $user_id = "";
-            $file_name = $file_name_or_user_id;
-        }
-
-        if ($user_id > 0) {
-            $user_id = $file_name_or_user_id;
-            $file_name = DB::table('users')->where('id', $user_id)->value('photo');
-
-            //this file comes from another online link as like amazon s3 server
-            if (strpos($file_name, 'https://') !== false) {
-                return $file_name;
-            }
-
-            if (File::exists('public/storage/userimage/' . $optimized . $file_name) && is_file('public/storage/userimage/' . $optimized . $file_name)) {
-                return asset('storage/userimage/' . $optimized . $file_name);
-            } else {
-                return asset('storage/userimage/default.png');
-            }
-        } elseif (File::exists('public/storage/userimage/' . $optimized . $file_name) && is_file('public/storage/userimage/' . $optimized . $file_name)) {
-            return asset('storage/userimage/' . $optimized . $file_name);
-        } elseif (strpos($file_name, 'https://') !== false) {
-            //this file comes from another online link as like amazon s3 server
-            return $file_name;
-        } else {
-            return asset('storage/userimage/default.png');
-        }
-    }
-}
-if (!function_exists('get_cover_photo')) {
-    function get_cover_photo($file_name_or_user_id = '', $optimized = "")
-    {
-
-        $optimized = $optimized . '/';
-        if ($file_name_or_user_id == '') {
-            $file_name_or_user_id = Auth()->user()->photo;
-        }
-        if (is_numeric($file_name_or_user_id)) {
-            $user_id = $file_name_or_user_id;
-            $file_name = "";
-        } else {
-            $user_id = "";
-            $file_name = $file_name_or_user_id;
-        }
-
-        if ($user_id > 0) {
-            $user_id = $file_name_or_user_id;
-            $file_name = DB::table('users')->where('id', $user_id)->value('photo');
-
-            //this file comes from another online link as like amazon s3 server
-            if (strpos($file_name, 'https://') !== false) {
-                return $file_name;
-            }
-
-            if (File::exists('public/storage/cover_photo/' . $optimized . $file_name) && is_file('public/storage/cover_photo/' . $optimized . $file_name)) {
-                return asset('storage/cover_photo/' . $optimized . $file_name);
-            } else {
-                return asset('storage/cover_photo/default.jpg');
-            }
-        } elseif (File::exists('public/storage/cover_photo/' . $optimized . $file_name) && is_file('public/storage/cover_photo/' . $optimized . $file_name)) {
-            return asset('storage/cover_photo/' . $optimized . $file_name);
-        } elseif (strpos($file_name, 'https://') !== false) {
-            //this file comes from another online link as like amazon s3 server
-            return $file_name;
-        } else {
-            return asset('storage/cover_photo/default.jpg');
-        }
-    }
-}
-
-if (!function_exists('get_post_image')) {
-    function get_post_image($file_name = '', $optimized = "")
-    {
-        //this file comes from another online link as like amazon s3 server
-        if (strpos($file_name, 'https://') !== false) {
-            return $file_name;
-        }
-
-        $optimized = $optimized . '/';
-        if (File::exists('public/storage/post/images/' . $optimized . $file_name) && is_file('public/storage/post/images/' . $optimized . $file_name)) {
-            return asset('storage/post/images/' . $optimized . $file_name);
-        } else {
-            return asset('storage/post/images/default.jpg');
-        }
-    }
-}
-
-//get system dark logo
-if (!function_exists('get_system_logo_favicon')) {
-    function get_system_logo_favicon($file_name = "", $foldername = "")
-    {
-        //this file comes from another online link as like amazon s3 server
-        if (strpos($file_name, 'https://') !== false) {
-            return $file_name;
-        }
-
-        $foldername = $foldername . '/';
-
-        if (!empty($file_name)) {
-            if (File::exists('public/storage/logo/' . $foldername . $file_name)) {
-                return asset('storage/logo/' . $foldername . $file_name);
-            } else {
-                return asset('storage/logo/' . $foldername . 'default/default.jpg');
-            }
-        } else {
-            return asset('storage/logo/' . $foldername . 'default/default.jpg');
-        }
-    }
-}
-
 if (!function_exists('script_checker')) {
     function script_checker($string = '', $convert_string = true)
     {
@@ -239,6 +255,22 @@ if (!function_exists('script_checker')) {
             return $string;
         }
 
+    }
+}
+
+if (!function_exists('is_image')) {
+    function is_image($file_name = '')
+    {
+        if (empty($file_name)) {
+            return false;
+        }
+
+        $file_extension = pathinfo($file_name, PATHINFO_EXTENSION);
+        if ($file_extension == 'jpg' || $file_extension == 'png' || $file_extension == 'jpeg' || $file_extension == 'gif') {
+            return true;
+        } else {
+            return false;
+        }
     }
 }
 
@@ -300,6 +332,78 @@ if (!function_exists('date_formatter')) {
             return date('d', $strtotime) . ' ' . date('M', $strtotime) . ' ' . date('Y', $strtotime) . ', ' . date('h:i:s A', $strtotime);
         }
     }
+}
+
+if (!function_exists('currency')) {
+    function currency($price = "")
+    {
+        return $price . '$';
+    }
+}
+
+if (!function_exists('slugify')) {
+    function slugify($string)
+    {
+        $string = preg_replace('~[^\\pL\d]+~u', '-', $string);
+        $string = trim($string, '-');
+        return strtolower($string);
+    }
+}
+
+if (!function_exists('get_video_extension')) {
+    function get_video_extension($url)
+    {
+        if (strpos($url, '.mp4') > 0) {
+            return 'mp4';
+        } elseif (strpos($url, '.webm') > 0) {
+            return 'webm';
+        } else {
+            return 'unknown';
+        }
+    }
+}
+
+if (!function_exists('ellipsis')) {
+    function ellipsis($long_string, $max_character = 30)
+    {
+        $long_string = strip_tags($long_string);
+        $short_string = strlen($long_string) > $max_character ? mb_substr($long_string, 0, $max_character) . "..." : $long_string;
+        return $short_string;
+    }
+}
+
+// RANDOM NUMBER GENERATOR FOR ELSEWHERE
+if (!function_exists('random')) {
+    function random($length_of_string, $lowercase = false)
+    {
+        // String of all alphanumeric character
+        $str_result = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz';
+
+        // Shufle the $str_result and returns substring
+        // of specified length
+        $randVal = substr(str_shuffle($str_result), 0, $length_of_string);
+        if ($lowercase) {
+            $randVal = strtolower($randVal);
+        }
+        return $randVal;
+    }
+}
+
+if (!function_exists('get_settings')) {
+    function get_settings($type = "", $return_type = "")
+    {
+        $value = DB::table('settings')->where('type', $type)->value('description');
+        if ($return_type === true) {
+            return json_decode($value, true);
+        } elseif ($return_type === 'decode') {
+            return json_decode($value, true);
+        } elseif ($return_type == "object") {
+            return json_decode($value);
+        } else {
+            return $value;
+        }
+    }
+}
 
 // folder check and create
 if (!function_exists('uploadTo')) {
@@ -312,6 +416,191 @@ if (!function_exists('uploadTo')) {
         return $path . '/';
     }
 }
+
+// file remove on delete and update
+
+if (!function_exists('removeFile')) {
+    function removeFile($foldername = "", $imagename = "")
+    {
+        if (File::exists(public_path('public/storage/' . $foldername . '/coverphoto/' . $imagename))) {
+            File::delete(public_path('public/storage/' . $foldername . '/coverphoto/' . $imagename));
+        }
+        if (File::exists(public_path('public/storage/' . $foldername . '/thumbnail/' . $imagename))) {
+            File::delete(public_path('public/storage/' . $foldername . '/thumbnail/' . $imagename));
+        }
+    }
+}
+
+// image view in blade
+
+// file remove on delete and update
+
+// just pass {folder name},{file name}and {image type} then feel the function
+
+if (!function_exists('viewImage')) {
+    function viewImage($foldername = "", $imagename = "", $imagetype = "")
+    {
+        if (!empty($foldername) && !empty($imagename) && !empty($imagetype)) {
+            return asset('storage/' . $foldername . '/' . $imagetype . '/' . $imagename);
+        } else {
+            return asset('storage/' . $foldername . '/' . $imagetype . '/default/default.jpg');
+        }
+    }
+}
+
+// associative array sorting desending
+
+function aasort(&$array, $key)
+{
+    $sorter = array();
+    $ret = array();
+    reset($array);
+    foreach ($array as $ii => $va) {
+        $sorter[$ii] = $va[$key];
+    }
+    arsort($sorter);
+    foreach ($sorter as $ii => $va) {
+        $ret[$ii] = $array[$ii];
+    }
+    $array = $ret;
+}
+
+//get marketplace product image
+if (!function_exists('get_product_image')) {
+    function get_product_image($file_name = "", $foldername = "")
+    {
+        //this file comes from another online link as like amazon s3 server
+        if (strpos($file_name, 'https://') !== false) {
+            return $file_name;
+        }
+
+        $foldername = $foldername . '/';
+
+        if (!empty($file_name)) {
+            if (File::exists('public/storage/marketplace/' . $foldername . $file_name)) {
+                return asset('storage/marketplace/' . $foldername . $file_name);
+            } else {
+                return asset('storage/marketplace/' . $foldername . 'default/default.jpg');
+            }
+        } else {
+            return asset('storage/marketplace/' . $foldername . 'default/default.jpg');
+        }
+    }
+}
+
+//get sponsor post  image
+if (!function_exists('get_sponsor_image')) {
+    function get_sponsor_image($file_name = "", $foldername = "")
+    {
+        //this file comes from another online link as like amazon s3 server
+        if (strpos($file_name, 'https://') !== false) {
+            return $file_name;
+        }
+
+        $foldername = $foldername . '/';
+
+        if (!empty($file_name)) {
+            if (File::exists('public/storage/sponsor/' . $foldername . $file_name)) {
+                return asset('storage/sponsor/' . $foldername . $file_name);
+            } else {
+                return asset('storage/sponsor/' . $foldername . 'default/default.jpg');
+            }
+        } else {
+            return asset('storage/sponsor/' . $foldername . 'default/default.jpg');
+        }
+    }
+}
+
+//get blog product image
+if (!function_exists('get_blog_image')) {
+    function get_blog_image($file_name = "", $foldername = "")
+    {
+        //this file comes from another online link as like amazon s3 server
+        if (strpos($file_name, 'https://') !== false) {
+            return $file_name;
+        }
+
+        $foldername = $foldername . '/';
+
+        if (!empty($file_name)) {
+            if (File::exists('public/storage/blog/' . $foldername . $file_name)) {
+                return asset('storage/blog/' . $foldername . $file_name);
+            } else {
+                return asset('storage/blog/' . $foldername . 'default/default.jpg');
+            }
+        } else {
+            return asset('storage/blog/' . $foldername . 'default/default.jpg');
+        }
+    }
+}
+// Get Job Image 
+if (!function_exists('get_job_image')) {
+    function get_job_image($file_name = "", $foldername = "")
+    {
+        //this file comes from another online link as like amazon s3 server
+        if (strpos($file_name, 'https://') !== false) {
+            return $file_name;
+        }
+
+        $foldername = $foldername . '/';
+
+        if (!empty($file_name)) {
+            if (File::exists('public/storage/job/' . $foldername . $file_name)) {
+                return asset('storage/job/' . $foldername . $file_name);
+            } else {
+                return asset('storage/job/' . $foldername . 'default/default.jpg');
+            }
+        } else {
+            return asset('storage/job/' . $foldername . 'default/default.jpg');
+        }
+    }
+}
+
+//get page logo
+if (!function_exists('get_page_logo')) {
+    function get_page_logo($file_name = "", $foldername = "")
+    {
+        //this file comes from another online link as like amazon s3 server
+        if (strpos($file_name, 'https://') !== false) {
+            return $file_name;
+        }
+
+        $foldername = $foldername . '/';
+
+        if (!empty($file_name)) {
+            if (File::exists('public/storage/pages/' . $foldername . $file_name)) {
+                return asset('storage/pages/' . $foldername . $file_name);
+            } else {
+                return asset('storage/pages/' . $foldername . 'default/default.jpg');
+            }
+        } else {
+            return asset('storage/pages/' . $foldername . 'default/default.jpg');
+        }
+    }
+
+}
+
+//get page cover photo
+if (!function_exists('get_page_cover_photo')) {
+    function get_page_cover_photo($file_name = "", $foldername = "")
+    {
+        //this file comes from another online link as like amazon s3 server
+        if (strpos($file_name, 'https://') !== false) {
+            return $file_name;
+        }
+
+        $foldername = $foldername . '/';
+
+        if (!empty($file_name)) {
+            if (File::exists('public/storage/pages/' . $foldername . $file_name)) {
+                return asset('storage/pages/' . $foldername . $file_name);
+            } else {
+                return asset('storage/pages/' . $foldername . 'default/default.jpg');
+            }
+        } else {
+            return asset('storage/pages/' . $foldername . 'default/default.jpg');
+        }
+    }
 
 }
 
@@ -361,4 +650,39 @@ if (!function_exists('get_group_cover_photo')) {
         }
     }
 
+}
+
+//get system dark logo
+if (!function_exists('get_system_logo_favicon')) {
+    function get_system_logo_favicon($file_name = "", $foldername = "")
+    {
+        //this file comes from another online link as like amazon s3 server
+        if (strpos($file_name, 'https://') !== false) {
+            return $file_name;
+        }
+
+        $foldername = $foldername . '/';
+
+        if (!empty($file_name)) {
+            if (File::exists('public/storage/logo/' . $foldername . $file_name)) {
+                return asset('storage/logo/' . $foldername . $file_name);
+            } else {
+                return asset('storage/logo/' . $foldername . 'default/default.jpg');
+            }
+        } else {
+            return asset('storage/logo/' . $foldername . 'default/default.jpg');
+        }
+    }
+}
+
+// Global Settings
+if (!function_exists('set_config')) {
+    function set_config($key = '', $value = '')
+    {
+        $config = json_decode(file_get_contents(base_path('config/config.json')), true);
+
+        $config[$key] = $value;
+
+        file_put_contents(base_path('config/config.json'), json_encode($config));
+    }
 }

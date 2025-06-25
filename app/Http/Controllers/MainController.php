@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Comments;
 use App\Models\FileUploader;
+use App\Models\Live_streamings;
 use App\Models\Media_files;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Database\Query\JoinClause;
@@ -153,9 +154,8 @@ class MainController extends Controller
         return view('frontend.main_content.posts', $page_data);
     }
 
-    public function create_post(Request $request)
+   public function create_post(Request $request)
     {
-
         //Data validation
 
         $rules = array('privacy' => ['required', Rule::in(['private', 'public', 'friends'])]);
@@ -168,7 +168,7 @@ class MainController extends Controller
             //Data validation
 
             $rules = array('multiple_files.*' => 'mimes:jpeg,png,jpg,gif,svg,mp4,mov,wmv,avi,webm|max:500000');
-            $rules = array('multiple_files.*' => 'mimes:mp4,mov,wmv,avi,WEBM,mkv|max:20048');
+            // $rules = array('multiple_files.*' => 'mimes:mp4,mov,wmv,avi,WEBM,mkv|max:20048');
             $validator = Validator::make($request->all(), $rules);
             if ($validator->fails()) {
                 $validation_errors = $validator->getMessageBag()->toArray();
@@ -260,16 +260,15 @@ class MainController extends Controller
             $data['hashtag'] = '';
         }
         // Mobile App View Image
-        $mobile_app_image = FileUploader::upload($request->mobile_app_image,'public/storage/post/images/');
+        $mobile_app_image = FileUploader::upload($request->mobile_app_image,'storage/app/public/post/images/');
         $data['mobile_app_image'] = $mobile_app_image;
 
 
         $data['status'] = 'active';
         $data['user_reacts'] = json_encode(array());
         $data['shared_user'] = json_encode(array());
-        $now = date('Y-m-d H:i:s');
-        $data['created_at'] = $now;
-        $data['updated_at'] = $now;
+        $data['created_at'] = time();
+        $data['updated_at'] = $data['created_at'];
 
         $post_id = Posts::insertGetId($data);
 
@@ -293,18 +292,37 @@ class MainController extends Controller
             }
 
             foreach ($request->multiple_files as $key => $media_file) {
+
                 $file_name = random(40);
+
                 $file_extention = strtolower($media_file->getClientOriginalExtension());
                 if ($file_extention == 'avi' || $file_extention == 'mp4' || $file_extention == 'webm' || $file_extention == 'mov' || $file_extention == 'wmv' || $file_extention == 'mkv') {
-                    $file_name = FileUploader::upload($media_file, 'public/storage/post/videos/' . $file_name . '.' . $file_extention);
+                    // Use absolute path to avoid path duplication
+                    $upload_path = public_path('storage/post/videos');
+                    if (!is_dir($upload_path)) {
+                        mkdir($upload_path, 0755, true);
+                    }
+                    $file_name = FileUploader::upload($media_file, $upload_path);
+                    if (!$file_name) {
+                        continue; // Skip this file if upload failed
+                    }
                     $file_type = 'video';
                 } else {
-                    $file_name = FileUploader::upload($media_file, 'public/storage/post/images/' . $file_name . '.' . $file_extention, 1000, null, 300);
+
+                    // Use absolute path to avoid path duplication
+                    $upload_path = public_path('storage/post/images');
+                    if (!is_dir($upload_path)) {
+                        mkdir($upload_path, 0755, true);
+                    }
+                    $file_name = FileUploader::upload($media_file, $upload_path, 1000, null, 300);
+                    if (!$file_name) {
+                        continue; // Skip this file if upload failed
+                    }
                     $file_type = 'image';
                 }
-                $file_name = $file_name . '.' . $file_extention;
+                // $file_name = $file_name . '.' . $file_extention;
 
-                $media_file_data = array('user_id' => $this->user->id, 'post_id' => $post_id, 'file_name' => $file_name, 'file_type' => $file_type, 'privacy' => $request->privacy);
+                $media_file_data = array('user_id' => auth()->user()->id, 'post_id' => $post_id, 'file_name' => $file_name, 'file_type' => $file_type, 'privacy' => $request->privacy);
 
                 if (isset($request->page_id) && !empty($request->page_id)) {
                     $media_file_data['page_id'] = $request->page_id;
@@ -318,24 +336,26 @@ class MainController extends Controller
             }
         }
 
-        // if ($data['post_type'] == 'live_streaming') {
-        //     //Live streaming
-        //     $live['publisher'] = $data['publisher'];
-        //     $live['publisher_id'] = $post_id;
-        //     $live['user_id'] = auth()->user()->id;
-        //     $live['details'] = json_encode(['link' => url('/streaming/live/' . $post_id), 'status' => TRUE]);
-        //     $live['created_at'] = date('Y-m-d H:i:s', time());
-        //     $live['updated_at'] = $live['created_at'];
+        if ($data['post_type'] == 'live_streaming') {
+            //Live streaming
+            $live['publisher'] = $data['publisher'];
+            $live['publisher_id'] = $post_id;
+            $live['user_id'] = auth()->user()->id;
+            $live['details'] = json_encode(['link' => url('/streaming/live/' . $post_id), 'status' => TRUE]);
+            $live['created_at'] = date('Y-m-d H:i:s', time());
+            $live['updated_at'] = $live['created_at'];
   
-        //     // Live_streamings::insert($live);
-        //     $response = array('open_new_tab' => url('/streaming/live/' . $post_id), 'reload' => 0, 'status' => 1, 'function' => 0, 'messageShowOn' => '[name=about]', 'message' => get_phrase('Post has been added to your timeline'));
-        // } else {
-        //     //Ajax flush message
-        //     Session::flash('success_message', get_phrase('Your post has been published'));
-        //     $response = array('reload' => 1);
-        // }
-        // return json_encode($response);
+            Live_streamings::insert($live);
+            $response = array('open_new_tab' => url('/streaming/live/' . $post_id), 'reload' => 0, 'status' => 1, 'function' => 0, 'messageShowOn' => '[name=about]', 'message' => get_phrase('Post has been added to your timeline'));
+        } else {
+            //Ajax flush message
+            Session::flash('success_message', get_phrase('Your post has been published'));
+            $response = array('reload' => 1);
+        }
+        return json_encode($response);
     }
+
+
 
     public function edit_post_form($id)
     {
