@@ -42,8 +42,8 @@ class BlogController extends Controller
 
         if ($request->image && !empty($request->image)) {
 
-            $file_name = FileUploader::upload($request->image, 'public/storage/blog/thumbnail', 370);
-            FileUploader::upload($request->image, 'public/storage/blog/coverphoto/'.$file_name, 900);
+            $file_name = FileUploader::upload($request->image, 'storage/blog/thumbnail', 370);
+            FileUploader::upload($request->image, 'storage/blog/coverphoto/'.$file_name, 900);
         }
 
         $blog = new Blog();
@@ -87,8 +87,8 @@ class BlogController extends Controller
 
         if ($request->image && !empty($request->image)) {
 
-            $file_name = FileUploader::upload($request->image, 'public/storage/blog/thumbnail', 370);
-            FileUploader::upload($request->image, 'public/storage/blog/coverphoto/'.$file_name, 900);
+            $file_name = FileUploader::upload($request->image, 'storage/blog/thumbnail', 370);
+            FileUploader::upload($request->image, 'storage/blog/coverphoto/'.$file_name, 900);
         }
 
         $blog = Blog::find($id);
@@ -153,11 +153,11 @@ class BlogController extends Controller
 
     public function single_blog($id){
         $page_data['comments'] = Comments::where('is_type','blog')->where('id_of_type',$id)->get();
-        $page_data['socailshare'] = Share::currentPage()
-                            ->facebook()
-                            ->twitter()
-                            ->linkedin()
-                            ->telegram()->getRawLinks();
+        // $page_data['socailshare'] = Share::currentPage()
+        //                     ->facebook()
+        //                     ->twitter()
+        //                     ->linkedin()
+        //                     ->telegram()->getRawLinks();
         $blog = Blog::find($id);
         $blog_view_data = json_decode($blog->view);
         if (!in_array(auth()->user()->id, $blog_view_data)){

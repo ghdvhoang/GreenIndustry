@@ -63,7 +63,7 @@
         </div>
       </div>
 
-      <div class="col-md-6 col-lg-6 col-xl-4">
+      {{-- <div class="col-md-6 col-lg-6 col-xl-4">
         <div class="single-dash-box">
            <div class="card colors-3">
               <div class="card-head d-flex justify-content-between align-items-center">
@@ -81,7 +81,7 @@
               </div>
            </div>
         </div>
-      </div>
+      </div> --}}
 
       <div class="col-md-6 col-lg-6 col-xl-4">
         <div class="single-dash-box">
@@ -103,7 +103,7 @@
         </div>
       </div>
 
-      <div class="col-md-6 col-lg-6 col-xl-4">
+      {{-- <div class="col-md-6 col-lg-6 col-xl-4">
         <div class="single-dash-box">
            <div class="card colors-5">
               <div class="card-head d-flex justify-content-between align-items-center">
@@ -121,9 +121,9 @@
               </div>
            </div>
         </div>
-      </div>
+      </div> --}}
 
-      <div class="col-md-6 col-lg-6 col-xl-4">
+      {{-- <div class="col-md-6 col-lg-6 col-xl-4">
         <div class="single-dash-box">
            <div class="card colors-6">
               <div class="card-head d-flex justify-content-between align-items-center">
@@ -141,7 +141,7 @@
               </div>
            </div>
         </div>
-      </div>
+      </div> --}}
 
 
     </div>

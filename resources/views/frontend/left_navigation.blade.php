@@ -59,14 +59,14 @@
                             Route::currentRouteName() == 'single.event') active @endif"><a href="{{ route('event') }}"><img
                                 src="{{ asset('storage/images/events-2.svg') }}"
                                 alt="Event">{{ get_phrase('Event') }}</a></li> --}}
-                    {{-- <li class="@if (Route::currentRouteName() == 'blogs' ||
+                    <li class="@if (Route::currentRouteName() == 'blogs' ||
                             Route::currentRouteName() == 'create.blog' ||
                             Route::currentRouteName() == 'myblog' ||
                             Route::currentRouteName() == 'blog.edit' ||
                             Route::currentRouteName() == 'single.blog' ||
                             Route::currentRouteName() == 'category.blog') active @endif"><a href="{{ route('blogs') }}"><img
                                 src="{{ asset('storage/images/blogging-2.svg') }}"
-                                alt="Blog">{{ get_phrase('Blog') }}</a></li> --}}
+                                alt="Blog">{{ get_phrase('Blog') }}</a></li>
                        {{-- Job Addon  --}}
                      @if (addon_status('job') == 1)          
                         <li class="@if (Route::currentRouteName() == 'jobs') active @endif"><a href="{{ route('jobs') }}"><img

@@ -4,8 +4,11 @@ namespace App\Http\Controllers;
 
 use App\Models\Blog;
 use App\Models\FileUploader;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Validation\Rule;
+use Illuminate\Support\Facades\Hash;
 
 class AdminCrudController extends Controller
 {
@@ -50,7 +53,7 @@ class AdminCrudController extends Controller
         $user->address = $request->address;
         if ($request->profile_photo && !empty($request->profile_photo)) {
 
-            $file_name = FileUploader::upload($request->profile_photo, 'public/storage/userimage', 800, null, 200, 200);
+            $file_name = FileUploader::upload($request->profile_photo, 'storage/userimage', 800, null, 200, 200);
             //Update to database
             $user->photo = $file_name;
         }
@@ -208,10 +211,7 @@ class AdminCrudController extends Controller
 
     }
 
-    
-
-   
-
+    // blog crud
     public function blogs()
     {
         if (isset($_GET['delete']) && $_GET['delete'] == 'yes' && isset($_GET['id'])) {
@@ -330,4 +330,225 @@ class AdminCrudController extends Controller
         }
     }
 
+
+
+    public function users()
+    {
+        $users = User::where('user_role', '!=', 'admin')->get();
+
+        $page_data['users'] = $users;
+        $page_data['view_path'] = 'users.list';
+        return view('backend.index', $page_data);
+    }
+
+    public function user_add()
+    {
+        $page_data['view_path'] = 'users.add';
+        return view('backend.index', $page_data);
+    }
+
+    public function user_store(Request $request)
+    {
+        //password validation
+        //  $request->validate([
+        //     'current_password' => ['required', new MatchOldPassword],
+        //     'new_password' => ['required'],
+        //     'new_confirm_password' => ['same:new_password'],
+        // ]);
+
+        $this->validate($request, [
+            'email' => ['required', 'email', Rule::unique('users')],
+            'name' => 'required', 'max:255',
+            'gender' => 'required',
+            'date_of_birth' => 'required',
+        ]);
+
+        if ($request->photo && !empty($request->photo)) {
+           // $file_name = FileUploader::upload($request->photo, 'public/storage/userimage', 800);
+            $file_name = FileUploader::upload($request->file('photo'), 'public/storage/userimage', 800);
+            //Update to database
+            $data['photo'] = $file_name;
+        }
+
+        $data['user_role'] = 'general';
+        $data['name'] = $request->name;
+        $data['email'] = $request->email;
+        $data['password'] = Hash::make($request->password);
+        $data['phone'] = $request->phone;
+        $data['address'] = $request->address;
+        $data['date_of_birth'] = strtotime($request->date_of_birth);
+        $data['about'] = $request->bio;
+        $data['friends'] = '[]';
+        $data['followers'] = '[]';
+        $data['gender'] = $request->gender;
+        $data['status'] = 1;
+        $date['created_at'] = now();
+
+        $user_insert = User::create($data);
+        $user_insert->markEmailAsVerified();
+        flash()->addSuccess('User added successfully');
+        return redirect()->route('admin.users');
+    }
+
+    public function user_edit($id = "")
+    {
+        $page_data['user_data'] = User::find($id);
+        $page_data['view_path'] = 'users.edit';
+        return view('backend.index', $page_data);
+    }
+
+    public function user_update($id = "", Request $request)
+    {
+        //password validation
+        //  $request->validate([
+        //     'current_password' => ['required', new MatchOldPassword],
+        //     'new_password' => ['required'],
+        //     'new_confirm_password' => ['same:new_password'],
+        // ]);
+
+        $this->validate($request, [
+            'email' => ['required', 'email', Rule::unique('users')->ignore($id)],
+            'name' => 'required', 'max:255',
+            'gender' => 'required',
+            'date_of_birth' => 'required',
+        ]);
+
+        if ($request->photo && !empty($request->photo)) {
+            $file_name = FileUploader::upload($request->photo, 'public/storage/userimage', 800);
+
+            $previous_image = public_path() . '/storage/userimage/optimized/' . User::where('id', $id)->value('photo');
+            $previous_image2 = public_path() . '/storage/userimage/' . User::where('id', $id)->value('photo');
+            if (file_exists($previous_image) && is_file($previous_image)) {
+                unlink($previous_image);
+                unlink($previous_image2);
+            }
+
+            //Update to database
+            $data['photo'] = $file_name;
+        }
+
+        $data['name'] = $request->name;
+        $data['email'] = $request->email;
+        $data['phone'] = $request->phone;
+        $data['address'] = $request->address;
+        $data['date_of_birth'] = strtotime($request->date_of_birth);
+        $data['about'] = $request->bio;
+        $data['gender'] = $request->gender;
+        $date['updated_at'] = now();
+
+        User::where('id', $id)->update($data);
+        flash()->addSuccess('User updated successfully');
+        return redirect()->route('admin.users');
+    }
+
+    public function user_delete($user_id = "")
+    {
+        User::find($user_id)->delete();
+        flash()->addSuccess('User deleted successfully');
+        return redirect()->route('admin.users');
+    }
+
+    public function user_status($user_id = "")
+    {
+        $query = User::where('id', $user_id);
+        if ($query->value('status') == 1) {
+            $query->update(['status' => 0]);
+        } else {
+            $query->update(['status' => 1]);
+        }
+        flash()->addSuccess('User deleted successfully');
+        return redirect()->route('admin.users');
+    }
+
+
+    public function server_side_users_data(Request $request)
+    {
+        // echo $total_number_of_row = User::where('user_role', '!=', 'admin')->count();
+        // $users = User::skip(12)->take(12)->select('name', 'id', 'email', 'photo', 'status')->where('user_role', '!=', 'admin')->orderBy('id', 'asc')->get();
+        // print_r($users);
+        // die;
+
+        $data = array();
+        //mentioned all with colum of database table that related with number of html table
+        $columns = array('id', 'id', 'name', 'email', 'status', 'id');
+
+        $limit = $request->length;
+        $start = $request->start;
+
+        $column_index = $columns[$request->order[0]['column']];
+
+        $dir = $request->order[0]['dir'];
+        $total_number_of_row = User::where('user_role', '!=', 'admin')->count();
+
+        $filtered_number_of_row = $total_number_of_row;
+        $search = $request->search['value'];
+
+        if (empty($search)) {
+            $users = User::skip($start)->take($limit)->select('name', 'id', 'email', 'photo', 'status', 'email_verified_at')->where('user_role', '!=', 'admin')->orderBy($column_index, $dir)->get();
+        } else {
+            $users = User::where(function ($query) use ($search) {
+                $query->where('name', 'like', '%' . $search . '%')
+                    ->orWhere('email', 'like', '%' . $search . '%');
+            })
+                ->where('user_role', '!=', 'admin');
+            $filtered_number_of_row = $users->count();
+            $users = $users->skip($start)->take($limit)->orderBy($column_index, $dir)->get();
+        }
+
+        foreach ($users as $key => $user):
+
+            //photo
+            $photo = '<img src="' . User::get_user_image($user['photo']) . '" alt="" height="50" width="50" class="img-fluid rounded-circle img-thumbnail">';
+
+            //user name
+            if ($user['email_verified_at'] == null) {$status = '<small><br><span class="badge bg-danger">' . get_phrase('Unverified') . '</span></small>';} else { $status = '';}
+            $name = $user['name'] . $status;
+
+            //user email
+            $email = $user['email'];
+
+            //Status
+            if ($user['status'] != 1) {
+                $status = '<span class="badge bg-danger">' . get_phrase('Disabled') . '</span>';
+            } else {
+                $status = '<span class="badge bg-success">' . get_phrase('Active') . '</span>';
+            }
+
+            if ($user['status'] != 1) {
+                $status_btn = '<a class="dropdown-item" onclick="return confirm(&#39;' . get_phrase('Are You Sure') . ' ?&#39;)" href="' . route('admin.user.status', $user['id']) . '">' . get_phrase('Active') . '</a>';
+            } else {
+                $status_btn = '<a class="dropdown-item" onclick="return confirm(&#39;' . get_phrase('Are You Sure') . ' ?&#39;)" href="' . route('admin.user.status', $user['id']) . '">' . get_phrase('Deactive') . '</a>';
+            }
+
+            $action = '<div class="adminTable-action me-auto">
+		                        <button type="button" class="eBtn eBtn-black dropdown-toggle table-action-btn-2" data-bs-toggle="dropdown" aria-expanded="false">
+		                          ' . get_phrase("Actions") . '
+		                        </button>
+		                        <ul class="dropdown-menu dropdown-menu-end eDropdown-menu-2 eDropdown-table-action">
+		                          <li><a class="dropdown-item" href="' . route('admin.user.edit', $user['id']) . '">' . get_phrase('Edit') . '</a>
+		                          </li>
+		                          <li>' . $status_btn . '</li>
+		                          <li>
+		                            <a class="dropdown-item" onclick="return confirm(&#39;' . get_phrase('Are You Sure Want To Delete') . ' ?&#39;)" href="' . route('admin.user.delete', $user['id']) . '">' . get_phrase('Delete') . '</a>
+		                          </li>
+		                        </ul>
+		                    </div>';
+
+            $nestedData['key'] = ++$key;
+            $nestedData['photo'] = $photo;
+            $nestedData['name'] = $name;
+            $nestedData['email'] = $email;
+            $nestedData['status'] = $status;
+            $nestedData['action'] = $action . '<script>$("a, i").tooltip();</script>';
+            $data[] = $nestedData;
+        endforeach;
+
+        $json_data = array(
+            "draw" => intval($request->draw),
+            "recordsTotal" => intval($total_number_of_row),
+            "recordsFiltered" => intval($filtered_number_of_row),
+            "data" => $data,
+        );
+        echo json_encode($json_data);
+    }
 }
