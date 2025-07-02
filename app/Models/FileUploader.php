@@ -12,12 +12,15 @@ class FileUploader extends Model
     use HasFactory;
 
     public static function upload($uploaded_file, $upload_to, $width = null, $height = null, $optimized_width = 250, $optimized_height = null){
-        // EX: $upload_file = this is the uploaded temp file => $request->video_feild_name
-        //     $upload_to = "public/storage/video" OR "public/storage/video/Sj8Ro5Gksde3T.mp4" OR "sdsdncts7sn.png" OR empty if amazon s3 is active
+
         if(!$uploaded_file) return;
 
         $s3_keys = get_settings('amazon_s3', 'object');
         if($s3_keys->active != 1){
+
+            if (!str_starts_with($upload_to, public_path()) && !str_starts_with($upload_to, storage_path())) {
+            $upload_to = public_path($upload_to); 
+        }
             if(is_dir($upload_to)){
                 $file_name = time().'-'.random(30).'.'.$uploaded_file->extension();
             }else{
@@ -47,6 +50,11 @@ class FileUploader extends Model
 
                 //Ultra Image optimization
                 $optimized_path = $upload_to.'/optimized';
+
+                if (!is_dir($optimized_path)) {
+                    mkdir($optimized_path, 0755, true);
+                }
+                
                 if(is_dir($optimized_path)){
                     //Image optimization
                     Image::make($uploaded_file->path())->orientate()->resize($optimized_width, $optimized_height, function ($constraint) {

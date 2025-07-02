@@ -14,7 +14,7 @@
                     <div class="login-txt ms-5 text-center w-100">
                         <h3>{{ get_phrase('Congratulations')}}</h3>
                         <h4>{{ get_phrase('Your Verification is Done')}}</h4>
-                        <h5>{{ get_phrase('Now Explore')}}</h5>
+                        <a href="{{ url('/') }}" class="btn btn-primary mt-3">{{ get_phrase('Explore Now') }}</a>
                     </div>
                 </div>
             </div>

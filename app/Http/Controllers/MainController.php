@@ -6,11 +6,13 @@ use App\Models\Comments;
 use App\Models\FileUploader;
 use App\Models\Live_streamings;
 use App\Models\Media_files;
+use App\Models\Post_share;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Database\Query\JoinClause;
 use Illuminate\Http\Request;
 use App\Models\User;
 use App\Models\Posts;
+use App\Models\Report;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\Validator;
@@ -154,7 +156,7 @@ class MainController extends Controller
         return view('frontend.main_content.posts', $page_data);
     }
 
-   public function create_post(Request $request)
+    public function create_post(Request $request)
     {
         //Data validation
 
@@ -260,7 +262,7 @@ class MainController extends Controller
             $data['hashtag'] = '';
         }
         // Mobile App View Image
-        $mobile_app_image = FileUploader::upload($request->mobile_app_image,'storage/app/public/post/images/');
+        $mobile_app_image = FileUploader::upload($request->mobile_app_image,'storage/post/images');
         $data['mobile_app_image'] = $mobile_app_image;
 
 
@@ -354,8 +356,6 @@ class MainController extends Controller
         }
         return json_encode($response);
     }
-
-
 
     public function edit_post_form($id)
     {
@@ -705,5 +705,107 @@ class MainController extends Controller
                 return view('frontend.index', $page_data);
             }
         }
+    }
+
+    public function save_post_report(Request $request)
+    {
+
+        $report = new Report();
+
+        $report->user_id = auth()->user()->id;
+        $report->post_id = $request->post_id;
+        $report->report = $request->report;
+        $report->save();
+        Session::flash('success_message', get_phrase('Report Done Successfully'));
+        return json_encode(array('reload' => 1));
+    }
+
+    public function comment_delete()
+    {
+        $response = array();
+        $comment_id = $_GET['comment_id'];
+        $done = Comments::where('comment_id', $comment_id)->delete();
+        if ($done) {
+            $response = array('alertMessage' => get_phrase('Comment Deleted Successfully'), 'fadeOutElem' => "#comment_" . $_GET['comment_id']);
+        }
+        return json_encode($response);
+    }
+
+    public function share_group(Request $request)
+    {
+        $postshare = new Post_share();
+        $postshare->user_id = auth()->user()->id;
+        $postshare->post_id = $request->shared_post_id;
+        $postshare->shared_on = 'group';
+        $postshare->save();
+
+        $post = new Posts();
+        $post->user_id = auth()->user()->id;
+        $post->publisher = 'group';
+        $post->publisher_id = $request->group_id;
+        $post->post_type = "share";
+        $post->privacy = "public";
+        $post->tagged_user_ids = json_encode(array());
+        if (isset($request->shared_post_id) && !empty($request->shared_post_id)) {
+            $post->description = $request->message;
+        }
+        if (isset($request->shared_product_id) && !empty($request->shared_product_id)) {
+            $post->description = $request->productUrl;
+        }
+        $post->status = 'active';
+        $post->user_reacts = json_encode(array());
+        $post->shared_user = json_encode(array());
+        $time = time();
+        $post->created_at = $time;
+        $post->updated_at = $time;
+        $done = $post->save();
+
+        $response = array('alertMessage' => get_phrase('Posted On Group Successfully'));
+        return json_encode($response);
+    }
+
+    // post delete
+
+    public function post_delete()
+    {
+        $response = array();
+        $done = Posts::where('post_id', $_GET['post_id'])->delete();
+        if ($done) {
+            $response = array('alertMessage' => get_phrase('Post Deleted Successfully'), 'fadeOutElem' => "#postIdentification" . $_GET['post_id']);
+        }
+        return json_encode($response);
+    }
+
+    public function custom_shared_post_view($id)
+    {
+
+        $post = Posts::where(function ($query) {
+            $query->whereJsonContains('users.friends', [$this->user->id])
+                ->where('posts.privacy', '!=', 'private')
+                ->orWhere('posts.user_id', $this->user->id);
+        })
+            ->where('posts.post_id', $id)
+            ->where('posts.status', 'active')
+            ->where('posts.report_status', '0')
+            ->join('users', 'posts.user_id', '=', 'users.id')
+            ->select('posts.*', 'users.name', 'users.photo', 'users.friends', 'posts.created_at as created_at')->first();
+
+        $page_data['post'] = $post;
+        $page_data['type'] = 'user_post';
+        return view('frontend.main_content.custom_shared_view', $page_data);
+    }
+
+    public function delete_media_file($id)
+    {
+        $media_file = Media_files::where('id', $id)->where('user_id', auth()->user()->id);
+        if ($media_file->count() > 0) {
+            remove_file('public/storage/post/images/' . $media_file->first()->file_name);
+            Media_files::find($id)->delete();
+            $response = array('alertMessage' => get_phrase('Image deleted successfully'), 'fadeOutElem' => "#previous-uploaded-img-" . $id);
+        } else {
+            $response = array('alertMessage' => get_phrase('Image not found'));
+        }
+
+        return json_encode($response);
     }
 }

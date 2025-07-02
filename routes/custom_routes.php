@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\AdminCrudController;
 use App\Http\Controllers\ChatController;
 use App\Http\Controllers\CustomUserController;
 use App\Http\Controllers\FollowController;
@@ -210,4 +211,39 @@ Route::controller(GroupController::class)->middleware('auth', 'verified',
 
     Route::get('album/details/page/list/{album_id}/{id}', 'album_details_page_list')->name('album.details.page.list');
 
+});
+
+//  admin all crud
+Route::controller(AdminCrudController::class)->group(function () {
+
+    Route::get('admin/dashboard/', 'admin_dashboard')->name('admin.dashboard')->middleware('auth', 'verified');
+
+    Route::get('admin/users/', 'users')->name('admin.users')->middleware('auth', 'verified', 'admin', 'prevent-back-history');
+    Route::get('admin/user/add', 'user_add')->name('admin.user.add')->middleware('auth', 'verified', 'admin', 'prevent-back-history');
+    Route::post('admin/user/store', 'user_store')->name('admin.user.store')->middleware('auth', 'verified', 'admin', 'prevent-back-history');
+    Route::get('admin/user/edit/{id}', 'user_edit')->name('admin.user.edit')->middleware('auth', 'verified', 'admin', 'prevent-back-history');
+    Route::post('admin/user/update/{id}', 'user_update')->name('admin.user.update')->middleware('auth', 'verified', 'admin', 'prevent-back-history');
+    Route::get('admin/user/delete/{id}', 'user_delete')->name('admin.user.delete')->middleware('auth', 'verified', 'admin', 'prevent-back-history');
+    Route::get('admin/user/status/{id}', 'user_status')->name('admin.user.status')->middleware('auth', 'verified', 'admin', 'prevent-back-history');
+
+    Route::any('admin/server_side_users_data', 'server_side_users_data')->name('admin.server_side_users_data');
+
+    // Route::group(['prefix' => 'admin', 'namespace' => 'Admin', 'middleware' => ['auth']], function() {
+    //     Route::get('/users', 'AdminController@user_index')->name('admin.users.index');
+    //     Route::get('/users/create', 'AdminController@user_create')->name('admin.users.create');
+    //     Route::post('/users', 'AdminController@user_store')->name('admin.users.store');
+    //     Route::get('/users/{user}/edit', 'AdminController@user_edit')->name('admin.users.edit');
+    //     Route::put('/users/{user}', 'AdminController@user_update')->name('admin.users.update');
+    //     Route::delete('/users/{user}', 'AdminController@user_destroy')->name('admin.users.destroy');
+    // });
+
+    Route::get('admin/change/password', 'admin_change_password')->name('admin.change.password')->middleware('auth', 'verified', 'admin', 'prevent-back-history');
+    Route::get('admin/profile/', 'admin_profile')->name('admin.profile')->middleware('auth', 'verified', 'admin', 'prevent-back-history');
+    Route::POST('admin/profile/update/', 'admin_profile_update')->name('admin.profile.update')->middleware('auth', 'verified', 'admin', 'prevent-back-history');
+
+    Route::get('admin/blog', 'blogs')->name('admin.blog')->middleware('auth', 'verified', 'admin', 'prevent-back-history');
+    Route::get('admin/blog/create', 'blog_create')->name('admin.blog.create')->middleware('auth', 'verified', 'admin', 'prevent-back-history');
+    Route::get('admin/blog/edit/{id}', 'blog_edit')->name('admin.blog.edit')->middleware('auth', 'verified', 'admin', 'prevent-back-history');
+    Route::post('admin/blog/created/', 'blog_created')->name('admin.blog.created')->middleware('auth', 'verified', 'admin', 'prevent-back-history');
+    Route::post('admin/blog/updated/{id}', 'blog_updated')->name('admin.blog.updated')->middleware('auth', 'verified', 'admin', 'prevent-back-history');
 });
