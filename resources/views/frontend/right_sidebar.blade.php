@@ -117,12 +117,12 @@
                 </h3>
             </div>
         </div> <!-- Widget End -->
-        <div class="widget sponser_widget">
+        {{-- <div class="widget sponser_widget">
             <div class="d-flex align-items-center justify-content-between">
                 <h3 class="widget-title">{{ get_phrase('Sponsored') }} </h3>
 
             </div>
-            {{-- <div class="sponsors">
+            <div class="sponsors">
                 @php
 
                     $sponsorPost = \App\Models\Sponsor::orderBy('id', 'desc')
@@ -154,8 +154,9 @@
                         </div>
                     </a>
                 @endforeach
-            </div> --}}
-        </div> <!-- Widget End -->
+            </div>
+        </div> 
+         <!-- Widget End --> --}}
         <div class="widget">
             <div class="d-flex align-items-center justify-content-between">
                 <h3 class="widget-title">{{ get_phrase('Active users') }} </h3>

@@ -99,7 +99,7 @@ class ChatController extends Controller
                             $media_file->move('storage/chat/videos/', $file_name.'.'.$file_extention);
                             $file_type = 'video';
                         }else{
-                            FileUploader::upload($media_file, 'public/storage/chat/images/'.$file_name, 1000, null, 300);
+                            FileUploader::upload($media_file, 'storage/chat/images/'.$file_name, 1000, null, 300);
                             $file_type = 'image';
                         }
                        // $file_name = $file_name.'.'.$file_extention;
@@ -149,7 +149,7 @@ class ChatController extends Controller
                         $media_file->move('storage/chat/videos/', $file_name.'.'.$file_extention);
                         $file_type = 'video';
                     }else{
-                        FileUploader::upload($media_file, 'public/storage/chat/images/'.$file_name, 1000, null, 300);
+                        FileUploader::upload($media_file, 'storage/chat/images/'.$file_name, 1000, null, 300);
                         $file_type = 'image';
                     }
                     //$file_name = $file_name.'.'.$file_extention;
@@ -282,22 +282,4 @@ class ChatController extends Controller
             return $done;
         }
     }
-
-
-  
-
-
-
-
-
-
-
-
-
-
-
-
 }
-
-
-

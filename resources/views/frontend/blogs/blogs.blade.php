@@ -1,13 +1,15 @@
+@extends('frontend.layouts.app')
+
 <div class="page-wrap">
     {{-- style="background-image: url('{{ asset('assets/frontend/images/blog-bg.png') }}')" --}}
-    <div class="blog-header nblog_header p-20 radius-8 mb-3" >
+    {{-- <div class="blog-header nblog_header p-20 radius-8 mb-3" >
             <h1 class="h3">{{get_phrase('Blogs')}}</h1>
         
-        {{-- <div class="btn-inline ">
+        <div class="btn-inline ">
             <a href="{{ route('create.blog') }}" class="btn common_btn btn-sm"> <i class="fa fa-circle-plus me-2"></i>{{ get_phrase('Create Blog') }}</a>
             <a href="{{ route('myblog') }}" class="btn common_btn btn-sm ms-2">{{ get_phrase('My Blog') }}</a>
-        </div> --}}
-    </div>
+        </div>
+    </div> --}}
     @if(count($categories)>0)
     <div class="card border-none radius-8 blog-tags">
         <div class="tags">

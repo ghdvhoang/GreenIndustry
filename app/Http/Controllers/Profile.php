@@ -192,7 +192,7 @@ class Profile extends Controller
 
 
             if ($request->thumbnail) {
-                $file_name = FileUploader::upload($request->thumbnail,'public/storage/thumbnails/album', 800);
+                $file_name = FileUploader::upload($request->thumbnail,'storage/thumbnails/album', 800);
 
                 $data['thumbnail'] = $file_name;
             }
@@ -418,7 +418,7 @@ class Profile extends Controller
 
         if ($request->profile_photo && !empty($request->profile_photo)) {
 
-            $file_name = FileUploader::upload($request->profile_photo,'public/storage/userimage', 800);
+            $file_name = FileUploader::upload($request->profile_photo,'storage/userimage', 800);
 
             //Create post for updating profile photo
             $this->create_profile_photo_post($request->profile_photo, $file_name);
@@ -443,7 +443,7 @@ class Profile extends Controller
     function create_profile_photo_post($image, $file_name)
     {
 
-        FileUploader::upload($image,'public/storage/post/images/'.$file_name, 800);
+        FileUploader::upload($image,'storage/post/images/'.$file_name, 800);
 
         $data['user_id'] = $this->user->id;
         $data['privacy'] = 'public';
@@ -470,7 +470,7 @@ class Profile extends Controller
     function create_cover_photo_post($image, $file_name)
     {
 
-        FileUploader::upload($image,'public/storage/post/images/'.$file_name, 800);
+        FileUploader::upload($image,'storage/post/images/'.$file_name, 800);
 
         $data['user_id'] = $this->user->id;
         $data['privacy'] = 'public';

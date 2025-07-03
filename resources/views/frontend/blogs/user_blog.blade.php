@@ -1,5 +1,5 @@
 <div class="page-wrap">
-    <div class="d-flex nblog_header pagetab-head radius-8 align-items-center justify-content-between p-20 bg-white">
+    {{-- <div class="d-flex nblog_header pagetab-head radius-8 align-items-center justify-content-between p-20 bg-white">
         <h3 class="h5 mb-0"> {{ get_phrase('My Blog') }}</h3>
         <div class="">
             <div class="btn-inline ">
@@ -7,7 +7,7 @@
                 <a href="{{ route('myblog') }}" class="btn  btn-sm ms-2 @if(Route::currentRouteName() == 'myblog') common_btn_2 @else common_btn @endif ">{{ get_phrase('My Blog') }}</a>
             </div>
         </div>
-    </div>
+    </div> --}}
     <div class="bg-white radius-8 p-20 Eblogs mt-12">
         @if(count($blogs)> 0)
         <div class="row g-3 blog-cards">

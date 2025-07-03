@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Models\FileUploader;
+use App\Models\Posts;
+use App\Models\Report;
 use App\Models\Setting;
 use Illuminate\Http\Request;
 
@@ -38,6 +40,23 @@ class SettingController extends Controller
             }
         }
         flash()->addSuccess('Logo Updated Successfully');
+        return redirect()->back();
+    }
+    
+
+    public function reported_post_to_admin()
+    {
+        $page_data['reported_post'] = Report::orderBy('id', 'DESC')->where('status', '0')->get();
+        $page_data['view_path'] = 'reported_post.report';
+        return view('backend.index', $page_data);
+    }
+
+    public function reported_post_remove_by_admin($id)
+    {
+        $done = Posts::where('post_id', $id)->update(['report_status' => '1']);
+        Report::where('post_id', $id)->update(['status' => '1']);
+        flash()->addSuccess('This Reported Item Delete Successfully');
+
         return redirect()->back();
     }
 }

@@ -82,8 +82,8 @@ Route::controller(SettingController::class)->group(function () {
 
     Route::POST('admin/term/page/data/update/{id}', 'update_term_page_data_update')->name('admin.term.page.data.update')->middleware('auth', 'verified', 'admin', 'prevent-back-history');
 
-    Route::get('admin/reported/post/', 'reported_post_to_admin')->name('admin.reported.post.view')->middleware('auth', 'verified', 'admin', 'prevent-back-history');
-    Route::get('admin/reported/post/delete/{id}', 'reported_post_remove_by_admin')->name('admin.reported.post.delete.by.admin')->middleware('auth', 'verified', 'admin', 'prevent-back-history');
+    Route::get('admin/reported/post/', 'reported_post_to_admin')->name('admin.reported.post.view')->middleware('auth', 'verified');
+    Route::get('admin/reported/post/delete/{id}', 'reported_post_remove_by_admin')->name('admin.reported.post.delete.by.admin')->middleware('auth', 'verified');
 
     Route::get('admin/live-video/setting/view', 'live_video_edit_form')->name('admin.live-video.view')->middleware('auth', 'verified', 'admin', 'prevent-back-history');
     Route::post('admin/live-video/setting/update', 'live_video_update')->name('admin.live-video.update')->middleware('auth', 'verified', 'admin', 'prevent-back-history');
@@ -258,14 +258,22 @@ Route::controller(AdminCrudController::class)->group(function () {
     //     Route::put('/users/{user}', 'AdminController@user_update')->name('admin.users.update');
     //     Route::delete('/users/{user}', 'AdminController@user_destroy')->name('admin.users.destroy');
     // });
+    // admin + prevent-back-history
+    Route::get('admin/change/password', 'admin_change_password')->name('admin.change.password')->middleware('auth', 'verified');
+    Route::get('admin/profile/', 'admin_profile')->name('admin.profile')->middleware('auth', 'verified');
+    Route::POST('admin/profile/update/', 'admin_profile_update')->name('admin.profile.update')->middleware('auth', 'verified');
 
-    Route::get('admin/change/password', 'admin_change_password')->name('admin.change.password')->middleware('auth', 'verified', 'admin', 'prevent-back-history');
-    Route::get('admin/profile/', 'admin_profile')->name('admin.profile')->middleware('auth', 'verified', 'admin', 'prevent-back-history');
-    Route::POST('admin/profile/update/', 'admin_profile_update')->name('admin.profile.update')->middleware('auth', 'verified', 'admin', 'prevent-back-history');
+    Route::get('admin/blog', 'blogs')->name('admin.blog')->middleware('auth', 'verified');
+    Route::get('admin/blog/create', 'blog_create')->name('admin.blog.create')->middleware('auth', 'verified');
+    Route::get('admin/blog/edit/{id}', 'blog_edit')->name('admin.blog.edit')->middleware('auth', 'verified');
+    Route::post('admin/blog/created/', 'blog_created')->name('admin.blog.created')->middleware('auth', 'verified');
+    Route::post('admin/blog/updated/{id}', 'blog_updated')->name('admin.blog.updated')->middleware('auth', 'verified');
 
-    Route::get('admin/blog', 'blogs')->name('admin.blog')->middleware('auth', 'verified', 'admin', 'prevent-back-history');
-    Route::get('admin/blog/create', 'blog_create')->name('admin.blog.create')->middleware('auth', 'verified', 'admin', 'prevent-back-history');
-    Route::get('admin/blog/edit/{id}', 'blog_edit')->name('admin.blog.edit')->middleware('auth', 'verified', 'admin', 'prevent-back-history');
-    Route::post('admin/blog/created/', 'blog_created')->name('admin.blog.created')->middleware('auth', 'verified', 'admin', 'prevent-back-history');
-    Route::post('admin/blog/updated/{id}', 'blog_updated')->name('admin.blog.updated')->middleware('auth', 'verified', 'admin', 'prevent-back-history');
+    // blog  category
+    Route::get('admin/blog/category/view/', 'view_blog_category')->name('admin.view.blog.category')->middleware('auth', 'verified');
+    Route::get('admin/blog/category/create/', 'create_blog_category')->name('admin.create.blog.category')->middleware('auth', 'verified');
+    Route::POST('admin/blog/category/save/', 'save_blog_category')->name('admin.save.blog.category')->middleware('auth', 'verified');
+    Route::get('admin/blog/category/edit/{id}', 'edit_blog_category')->name('admin.edit.blog.category')->middleware('auth', 'verified');
+    Route::POST('admin/blog/category/update/{id}', 'update_blog_category')->name('admin.update.blog.category')->middleware('auth', 'verified');
+    Route::get('admin/blog/category/delete/{id}', 'delete_blog_category')->name('admin.delete.blog.category')->middleware('auth', 'verified');
 });

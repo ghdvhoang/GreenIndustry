@@ -212,7 +212,7 @@
             </li>
         @endif --}}
 
-        {{-- <li class="nav-links-li  @if (Route::currentRouteName() == 'admin.blog' ||
+        <li class="nav-links-li  @if (Route::currentRouteName() == 'admin.blog' ||
                 Route::currentRouteName() == 'admin.view.blog.category' ||
                 Route::currentRouteName() == 'admin.create.blog.category' ||
                 Route::currentRouteName() == 'admin.blog.create' ||
@@ -242,7 +242,9 @@
                 <li><a class="@if (Route::currentRouteName() == 'admin.create.blog.category') Active @endif"
                         href="{{ route('admin.create.blog.category') }}">{{ get_phrase('Create Category') }}</a></li>
             </ul>
-        </li> --}}
+            
+        </li>
+
         {{-- Badge --}}
         {{-- <li class="nav-links-li  @if (Route::currentRouteName() == 'admin.badge') showMenu  @endif">
             <div class="iocn-link">

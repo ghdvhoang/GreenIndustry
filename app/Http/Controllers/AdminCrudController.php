@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Blog;
+use App\Models\Blogcategory;
 use App\Models\FileUploader;
 use App\Models\User;
 use Illuminate\Http\Request;
@@ -252,8 +253,8 @@ class AdminCrudController extends Controller
         ]);
 
         if ($request->image && !empty($request->image)) {
-            $file_name = FileUploader::upload($request->image, 'public/storage/blog/thumbnail', 370);
-            FileUploader::upload($request->image, 'public/storage/blog/coverphoto/' . $file_name, 900);
+            $file_name = FileUploader::upload($request->image, 'storage/blog/thumbnail', 370);
+            FileUploader::upload($request->image, 'storage/blog/coverphoto/' . $file_name, 900);
         }
 
         $data['user_id'] = Auth()->user()->id;
@@ -295,8 +296,8 @@ class AdminCrudController extends Controller
 
         if ($request->image && !empty($request->image)) {
 
-            $file_name = FileUploader::upload($request->image, 'public/storage/blog/thumbnail', 370);
-            FileUploader::upload($request->image, 'public/storage/blog/coverphoto/' . $file_name, 900);
+            $file_name = FileUploader::upload($request->image, 'storage/blog/thumbnail', 370);
+            FileUploader::upload($request->image, 'storage/blog/coverphoto/' . $file_name, 900);
         }
 
         $blog = Blog::find($id);
@@ -550,5 +551,62 @@ class AdminCrudController extends Controller
             "data" => $data,
         );
         echo json_encode($json_data);
+    }
+
+    // blog category
+    public function view_blog_category()
+    {
+        $page_data['all_category'] = Blogcategory::all();
+        $page_data['view_path'] = 'blog_category.index';
+        return view('backend.index', $page_data);
+    }
+
+    public function create_blog_category()
+    {
+        $page_data['view_path'] = 'blog_category.create';
+        return view('backend.index', $page_data);
+    }
+
+    public function save_blog_category(Request $request)
+    {
+        $validated = $request->validate([
+            'blogcategory' => 'required|max:255|string|unique:blogcategories,name',
+        ]);
+        $blogcategories = new Blogcategory();
+        $blogcategories->name = $request->blogcategory;
+        $done = $blogcategories->save();
+        if ($done) {
+            flash()->addSuccess('Blog Category has been added successfully!');
+        }
+        return redirect()->back();
+    }
+
+    public function edit_blog_category($id)
+    {
+        $page_data['blogcategories'] = Blogcategory::find($id);
+        $page_data['view_path'] = 'blog_category.edit';
+        return view('backend.index', $page_data);
+    }
+
+    public function update_blog_category(Request $request, $id)
+    {
+        $validated = $request->validate([
+            'blogcategory' => 'required|max:255|string|unique:blogcategories,name,' . $id,
+        ]);
+        $blogcategories = Blogcategory::find($id);
+        $blogcategories->name = $request->blogcategory;
+        $done = $blogcategories->save();
+        if ($done) {
+            flash()->addSuccess('Blog Category has been updated successfully!');
+        }
+        return redirect()->route('admin.view.blog.category');
+    }
+
+    public function delete_blog_category($id)
+    {
+        $blogcategories = Blogcategory::find($id);
+        $blogcategories->delete();
+        flash()->addSuccess('Blog Category Brand has been Deleted successfully!');
+        return redirect()->back();
     }
 }

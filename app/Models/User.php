@@ -75,7 +75,7 @@ class User extends Authenticatable implements MustVerifyEmail
 
     public static function get_user_image($file_name = "", $optimized = ""){
         $optimized = $optimized.'/';
-        if(base_path('public/storage/userimage/'.$optimized.$file_name) && is_file('public/storage/userimage/'.$optimized.$file_name)){
+        if(base_path('storage/userimage/'.$optimized.$file_name) && is_file('storage/userimage/'.$optimized.$file_name)){
             return asset('storage/userimage/'.$optimized.$file_name);
         }else{
             return asset('storage/userimage/default.png');
