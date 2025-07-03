@@ -1,4 +1,3 @@
-@extends('frontend.layouts.app')
 
 <div class="page-wrap">
     {{-- style="background-image: url('{{ asset('assets/frontend/images/blog-bg.png') }}')" --}}
