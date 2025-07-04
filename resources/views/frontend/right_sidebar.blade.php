@@ -427,9 +427,9 @@
                 <div class="posts-wrap" id="searchblogviewsection">
                     @foreach ($recent_posts as $post)
                         <div class="post-entry d-flex mb-8">
-                            <div class="post-thumb"><img class="img-fluid rounded"
+                            {{-- <div class="post-thumb"><img class="img-fluid rounded"
                                     src="{{ get_blog_image($post->thumbnail, 'thumbnail') }}" alt="Recent Post">
-                            </div>
+                            </div> --}}
                             <div class="post-txt ms-2">
                                 <h3 class="mb-0"><a class="ellipsis-line-2"
                                         href="{{ route('single.blog', $post->id) }}">{{ $post->title }}</a></h3>

@@ -93,78 +93,32 @@
 
 
 @section('custom_js_code_for_chat')
-
-<script>
-    $(document).ready(function () {
-        // Lắng nghe khi form gửi
-        $('#chatMessageFieldForm').on('submit', function (e) {
-            e.preventDefault(); // chặn reload trang
-
-            let form = this;
-            let formData = new FormData(form);
-
-            $.ajax({
-                type: 'POST',
-                url: $(form).attr('action'),
-                data: formData,
-                processData: false,
-                contentType: false,
-                success: function (res) {
-                    const data = JSON.parse(res);
-
-                    // 1. Chèn tin nhắn mới vào hộp chat
-                    if (data.appendElement && data.content) {
-                        $(data.appendElement).append(data.content);
-                    }
-
-                    // 2. Reset nội dung input + nút gửi
-                    $('#ChatmessageField').val('');
-                    $('#ChatsentButton').addClass('d-none');
-                    $('#ChatthumbsUp').removeClass('d-none');
-                    $('#ChatthumbsUpInput').val('1');
-
-                    // 3. Reset uploader nếu có
-                    $('#messageFileUploder').html('');
-
-                    // 4. Focus lại vào ô nhập
-                    $('#ChatmessageField').focus();
-
-                    // 5. Scroll xuống cuối
-                    var elem = document.getElementById('messageShowDiv');
-                    elem.scrollTop = elem.scrollHeight;
-                },
-                error: function (xhr) {
-                    alert('Lỗi khi gửi tin nhắn.');
-                    console.log(xhr.responseText);
-                }
-            });
-        });
-    });
-</script>
-
 <script>
     "use strict";
     
     $(document).ready(function(){
-        //msg scrolling
         var elem = document.getElementById('messageShowDiv');
-        elem.scrollTop = elem.scrollHeight;
+        if(elem) { // Kiểm tra xem phần tử có tồn tại không trước khi dùng
+            elem.scrollTop = elem.scrollHeight;
+        }
 
-          
+        // 2. Tự động gọi để tải tin nhắn mới sau mỗi 4 giây
         setInterval(ajaxCallForDataLoad, 4000);   
-    });
 
-    $('.input-images:not(.initialized)').imageUploader({
-        imagesInputName:'multiple_files',
-        extensions: ['.jpg','.jpeg','.png','.gif','.svg'],
-        mimes: ['image/jpeg','image/png','image/gif','image/svg+xml'],
-        label: 'Drag & Drop files here or click to browse'
-    });
+        // 3. Khởi tạo plugin upload ảnh
+        $('.input-images:not(.initialized)').imageUploader({
+            imagesInputName:'multiple_files',
+            extensions: ['.jpg','.jpeg','.png','.gif','.svg'],
+            mimes: ['image/jpeg','image/png','image/gif','image/svg+xml'],
+            label: 'Drag & Drop files here or click to browse'
+        });
 
+        // -- CÁC HÀNH ĐỘNG CỦA NGƯỜI DÙNG --
+
+        // 4. Xử lý khi người dùng gõ chữ vào ô chat
         $('#ChatmessageField').keyup(function() {
-            let value = $('#ChatmessageField').val();
-            let stringlength = value.length;
-            if(stringlength > 0){
+            let value = $(this).val();
+            if(value.length > 0){
                 $('#ChatsentButton').removeClass('d-none');
                 $('#ChatthumbsUp').addClass('d-none');
                 $('#ChatthumbsUpInput').val('0');
@@ -175,90 +129,98 @@
             }
         });
 
+        // 5. Xử lý khi người dùng click vào icon upload ảnh
+        $("#messgeImageUploader").click(function() {
+            $('#ChatsentButton').removeClass('d-none');
+            $('#ChatthumbsUp').addClass('d-none');
+            $('#messageFileUploder').toggle();
+        });
 
-    $(document).ready(function() {
-        setTimeout(function() {
-            $('#ChatmessageField').val('');
-        }, 2000);
-    });
+        // 6. Xử lý khi tìm kiếm bạn bè trong danh sách chat
+        $("#chatSearch").keyup(function(){
+            let value= $(this).val();
+            $.ajax({
+                type : 'get',
+                url : '{{URL::to('/chat/profile/search/')}}',
+                // không cần header CSRF cho request GET
+                data:{'search':value},
+                success:function(response){
+                    $('#chatFriendList').html(response);
+                }
+            });
+        });
+
+        // 7. [PHẦN SỬA LỖI QUAN TRỌNG] Lắng nghe sự kiện sau khi form được gửi thành công
+        $(document).on('ajaxForm.afterSubmit', function(e) {
+            if (e.target.id == 'chatMessageFieldForm') {
+                // Xóa nội dung trong ô nhập liệu chat.
+                $('#ChatmessageField').val(''); 
+                
+                // Xóa các ảnh đã chọn để upload (nếu có).
+                $('#messageFileUploder').find('.uploaded').remove();
+
+                // Chuyển nút "Gửi" trở lại thành nút "Thích".
+                $('#ChatsentButton').addClass('d-none');
+                $('#ChatthumbsUp').removeClass('d-none');
+                $('#ChatthumbsUpInput').val('1');
+
+                // Cuộn xuống tin nhắn mới nhất.
+                var elem = document.getElementById('messageShowDiv');
+                if(elem){
+                    elem.scrollTop = elem.scrollHeight;
+                }
+
+                console.log('Chat form đã được reset thành công!');
+            }
+        });
+
+    }); // <-- Kết thúc của khối $(document).ready() DUY NHẤT
 
 
-
-
-
-
-    //imagae upload 
-    $( "#messgeImageUploader" ).click(function() {
-        $('#ChatsentButton').removeClass('d-none');
-        $('#ChatthumbsUp').addClass('d-none');
-        $('#messageFileUploder').toggle();
-      });
-
-
-
+    // -- CÁC HÀM RIÊNG LẺ (có thể đặt bên ngoài document.ready) --
 
     function ajaxCallForDataLoad() {
         var currentURL = $(location).attr('href'); 
         var id = currentURL.substring(currentURL.lastIndexOf('/') + 1);
-        $.ajax({
-            type : 'get',
-            url : '{{URL::to('/chat/inbox/load/data/ajax/' )}}',
-            headers: {
-                'X-CSRF-TOKEN': $('meta[name="csrf_token"]').attr('content')
-            },
-            data:{'id':id},
-            success:function(response){
-                console.log(response);
-                distributeServerResponse(response);
-                if(response.content !==undefined){
-                    var elem = document.getElementById('messageShowDiv');
-                    elem.scrollTop = elem.scrollHeight;
+
+        // Chỉ gọi ajax nếu id là một số hợp lệ
+        if(!isNaN(id) && id){
+            $.ajax({
+                type : 'get',
+                url : '{{URL::to('/chat/inbox/load/data/ajax/' )}}',
+                data:{'id':id},
+                success:function(response){
+                    distributeServerResponse(response);
+                    if(response.content !== undefined && response.content.trim() !== ''){
+                        var elem = document.getElementById('messageShowDiv');
+                        if(elem){
+                           elem.scrollTop = elem.scrollHeight;
+                        }
+                    }
+                },
+                error: function(error) {
+                    // Ngừng gọi lại nếu có lỗi (ví dụ: người dùng đăng xuất)
+                    // Hoặc bạn có thể thêm logic xử lý lỗi ở đây
                 }
-            }
-        });
+            });
+        }
     }
 
-
+    // Hàm này không được gọi ở đâu cả, nhưng giữ lại nếu bạn cần
     function ajaxCallForReadData() {
         var currentURL = $(location).attr('href'); 
         var id = currentURL.substring(currentURL.lastIndexOf('/') + 1);
-        $.ajax({
-            type : 'get',
-            url : '{{URL::to('/chat/inbox/read/message/ajax/' )}}',
-            headers: {
-                'X-CSRF-TOKEN': $('meta[name="csrf_token"]').attr('content')
-            },
-            data:{'id':id},
-            success:function(response){
-                console.log(response);
-            }
-        });
+        if(!isNaN(id) && id){
+            $.ajax({
+                type : 'get',
+                url : '{{URL::to('/chat/inbox/read/message/ajax/' )}}',
+                data:{'id':id},
+                success:function(response){
+                    console.log(response);
+                }
+            });
+        }
     }
-
-
-
-
-
-
-
-
-    //chat search 
-    $("#chatSearch").keyup(function(){
-        
-        let value= $(this).val();
-        $.ajax({
-            type : 'get',
-            url : '{{URL::to('/chat/profile/search/')}}',
-            headers: {
-                'X-CSRF-TOKEN': $('meta[name="csrf_token"]').attr('content')
-            },
-            data:{'search':value},
-            success:function(response){
-                console.log(response);
-                $('#chatFriendList').html(response);
-            }
-        });
-    });
 
 </script>
 @endsection
