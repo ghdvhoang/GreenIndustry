@@ -1,4 +1,3 @@
-
 <div class="page-wrap">
     {{-- style="background-image: url('{{ asset('assets/frontend/images/blog-bg.png') }}')" --}}
     {{-- <div class="blog-header nblog_header p-20 radius-8 mb-3" >

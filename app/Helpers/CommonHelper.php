@@ -422,11 +422,11 @@ if (!function_exists('uploadTo')) {
 if (!function_exists('removeFile')) {
     function removeFile($foldername = "", $imagename = "")
     {
-        if (File::exists(public_path('public/storage/' . $foldername . '/coverphoto/' . $imagename))) {
-            File::delete(public_path('public/storage/' . $foldername . '/coverphoto/' . $imagename));
+        if (File::exists(public_path('storage/' . $foldername . '/coverphoto/' . $imagename))) {
+            File::delete(public_path('storage/' . $foldername . '/coverphoto/' . $imagename));
         }
-        if (File::exists(public_path('public/storage/' . $foldername . '/thumbnail/' . $imagename))) {
-            File::delete(public_path('public/storage/' . $foldername . '/thumbnail/' . $imagename));
+        if (File::exists(public_path('storage/' . $foldername . '/thumbnail/' . $imagename))) {
+            File::delete(public_path('storage/' . $foldername . '/thumbnail/' . $imagename));
         }
     }
 }
@@ -500,7 +500,7 @@ if (!function_exists('get_sponsor_image')) {
         $foldername = $foldername . '/';
 
         if (!empty($file_name)) {
-            if (File::exists('public/storage/sponsor/' . $foldername . $file_name)) {
+            if (File::exists('storage/sponsor/' . $foldername . $file_name)) {
                 return asset('storage/sponsor/' . $foldername . $file_name);
             } else {
                 return asset('storage/sponsor/' . $foldername . 'default/default.jpg');
@@ -523,7 +523,7 @@ if (!function_exists('get_blog_image')) {
         $foldername = $foldername . '/';
 
         if (!empty($file_name)) {
-            if (File::exists('public/storage/blog/' . $foldername . $file_name)) {
+            if (File::exists('storage/blog/' . $foldername . $file_name)) {
                 return asset('storage/blog/' . $foldername . $file_name);
             } else {
                 return asset('storage/blog/' . $foldername . 'default/default.jpg');
@@ -616,7 +616,7 @@ if (!function_exists('get_group_logo')) {
         $foldername = $foldername . '/';
 
         if (!empty($file_name)) {
-            if (File::exists('public/storage/groups/' . $foldername . $file_name)) {
+            if (File::exists('storage/groups/' . $foldername . $file_name)) {
                 return asset('storage/groups/' . $foldername . $file_name);
             } else {
                 return asset('storage/groups/' . $foldername . 'default/default.jpg');
@@ -640,7 +640,7 @@ if (!function_exists('get_group_cover_photo')) {
         $foldername = $foldername . '/';
 
         if (!empty($file_name)) {
-            if (File::exists('public/storage/groups/' . $foldername . $file_name)) {
+            if (File::exists('storage/groups/' . $foldername . $file_name)) {
                 return asset('storage/groups/' . $foldername . $file_name);
             } else {
                 return asset('storage/groups/' . $foldername . 'default/default.jpg');

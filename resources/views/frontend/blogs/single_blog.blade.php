@@ -4,30 +4,29 @@
 @endphp
 
 <div class="single-wrap">
-    <div class="sblog_feature bg-white radius-8">
-        <div class="blog-feature " style="background-image: url('{{ get_blog_image($blog->thumbnail,'coverphoto') }}')">
-            <div class="blog-head">
-                <div class="d-flex align-items-center">
-                    <img src="{{ get_user_image($blog->user_id,'optimized') }}" class="user-round user_image_show_on_modal" alt="">
-                    <div class="ava-info ms-2">
-                        <h6 class="mb-0"><a href="{{ route('user.profile.view',$blog->getUser->id) }}">{{ $blog->getUser->name }}</a></h6>
-                        <small>{{ $blog->created_at->diffForHumans()  }}</small>
-                    </div>
+    <div class="sblog_feature">
+        <div class="blog-head"> 
+            <div class="d-flex align-items-center  bg-white p-4  radius-8">
+                <img src="{{ get_user_image($blog->user_id,'optimized') }}" class="user-round user_image_show_on_modal" alt="">
+                <div class="ava-info ms-2">
+                    <h6 class="mb-0"><a href="{{ route('user.profile.view',$blog->getUser->id) }}" class="text-main-green">{{ $blog->getUser->name }}</a></h6>
+                    <small>{{ $blog->created_at->diffForHumans()  }}</small>
                 </div>
-               
             </div>
-        </div><!--  Blog Cover End -->
-        <div class="sm_bottom">
-             <div>
-                <a href="#"> {{ $blog->created_at->format("d-M-Y") }} </a>
-               <h1>{{ $blog->title }}</h1>
-             </div>
+        </div>
+
+        <div class="sm_bottom mt-4 bg-white p-4 radius-8">
+            <div>
+                <a href="#" class="text-muted"> {{ $blog->created_at->format("d-M-Y") }} </a>
+                <h1 class="mt-2 mb-3">{{ $blog->title }}</h1>
+            </div>
             <div class="bhead-meta">
                 <span>{{ $total_comments }} {{ get_phrase('Comments') }}</span>
-                <span>{{ count(json_decode($blog->view)) }} {{ get_phrase('Views') }}</span>
+                <span class="ms-3">{{ count(json_decode($blog->view)) }} {{ get_phrase('Views') }}</span>
             </div>
         </div>
     </div>
+{{-- Kết thúc khối được tối ưu --}}
     <div class="row mt-12 ">
         <div class="col-lg-12">
             <div class="card border-none p-3 radius-8 nblog_details blog-details">

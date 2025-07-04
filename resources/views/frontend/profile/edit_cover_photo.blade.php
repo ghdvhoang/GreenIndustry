@@ -11,4 +11,4 @@
 	</div>
 </form>
 
-@include('frontend.initialize')
+@include('frontend.initialize') 

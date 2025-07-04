@@ -42,9 +42,6 @@
                         src="{{ asset('storage/images/location.png') }}" alt="photo"
                         alt="photo"></button>
                 <button class="btn" data-bs-toggle="modal" data-bs-target="#createPost" onclick="$('#createPost').modal('show');"><img
-                        src="{{ asset('storage/images/camera.svg') }}"
-                        alt="photo"></button>
-                <button class="btn" data-bs-toggle="modal" data-bs-target="#createPost" onclick="$('#createPost').modal('show');"><img
                         src="{{ asset('storage/images/plus-circle-fill.svg') }}"
                         alt="photo"></button>
             </div>

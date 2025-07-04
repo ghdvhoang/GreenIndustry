@@ -162,8 +162,9 @@
                                         </div>
                                     </div>
                                 </div>
-                                <span
-                                    class="noti-time">{{ $newNotification->created_at->timezone(Auth::user()->timezone)->diffForHumans() }}</span>
+                                <span class="noti-time">
+                                    {{ $newNotification->created_at->timezone(Auth::user()->timezone ?? config('app.timezone'))->diffForHumans() }}
+                                </span>
                             </li>
                         @elseif ($newNotification->type == 'fundraiser_request_accept')
                             <li class="notify-item friendr-item">

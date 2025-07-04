@@ -62,7 +62,7 @@ class GroupController extends Controller
         }
         
         if ($request->image && !empty($request->image)) {
-            $file_name = FileUploader::upload($request->image, 'public/storage/groups/logo', 300);
+            $file_name = FileUploader::upload($request->image, 'storage/groups/logo', 300);
         }
 
         $group = new Group();
@@ -104,7 +104,7 @@ class GroupController extends Controller
         //previous image name
         $imagename = $group->logo;
         if ($request->image && !empty($request->image)) {
-            $file_name = FileUploader::upload($request->image, 'public/storage/groups/logo', 300);
+            $file_name = FileUploader::upload($request->image, 'storage/groups/logo', 300);
         }
 
         
@@ -133,35 +133,71 @@ class GroupController extends Controller
     }
 
 
-    public function updatecoverphoto(Request $request,$id){
-        $group = Group::find($id);
-        $imagename = $group->coverphoto;
+    // public function updatecoverphoto(Request $request,$id){
+    //     $group = Group::find($id);
+    //     $imagename = $group->coverphoto;
 
-        if ($request->cover_photo && !empty($request->cover_photo)) {
-            //Upload image
-            $file_name = rand(1, 35000) . '.' . $request->cover_photo->getClientOriginalExtension();
-            //logo
-            $img = Image::make($request->cover_photo);
-            $img->resize(1120, null, function ($constraint) {
-                $constraint->aspectRatio();
-                $constraint->upsize();
-            });
-            $img->save(uploadTo('groups/coverphoto') . $file_name);
-            $group->banner = $file_name;
-        }
+    //     if ($request->cover_photo && !empty($request->cover_photo)) {
+    //         //Upload image
+    //         $file_name = rand(1, 35000) . '.' . $request->cover_photo->getClientOriginalExtension();
+    //         //logo
+    //         $img = Image::make($request->cover_photo);
+    //         $img->resize(1120, null, function ($constraint) {
+    //             $constraint->aspectRatio();
+    //             $constraint->upsize();
+    //         });
+    //         $img->save(uploadTo('groups/coverphoto') . $file_name);
+    //         $group->banner = $file_name;
+    //     }
+    //     $done = $group->save();
+    //     if($done){
+    //         // just put the file name and folder name nothing more :) 
+    //         if(!empty($request->cover_photo)){
+    //             if (File::exists(public_path('storage/groups/coverphoto/'.$imagename))) {
+    //                 File::delete(public_path('storage/groups/coverphoto/'.$imagename));
+    //             }
+    //         }
+    //     }
+    //     Session::flash('success_message', get_phrase('Cover Photo Updated Successfully'));
+    //     return json_encode(array('reload' => 1));
+    // }
+
+    public function updatecoverphoto(Request $request, $id) {
+    $group = Group::find($id);
+    
+    // SỬA Ở ĐÂY: Lấy tên file cũ từ cột 'banner'
+    $old_banner_name = $group->banner;
+
+    if ($request->hasFile('cover_photo')) { // Dùng hasFile() để kiểm tra an toàn hơn
+        // Upload image
+        $file = $request->file('cover_photo');
+        $file_name = uniqid() . '.' . $file->getClientOriginalExtension(); // Dùng uniqid() để an toàn hơn rand()
+
+        $img = Image::make($file);
+        $img->resize(1120, null, function ($constraint) {
+            $constraint->aspectRatio();
+            $constraint->upsize();
+        });
+
+        // Sửa helper uploadTo. Đảm bảo nó trỏ đến 'storage/app/public/...'
+        // Ví dụ: storage_path('app/public/groups/coverphoto/' . $file_name)
+        $img->save(public_path('storage/groups/coverphoto/' . $file_name));
+
+        // Cập nhật tên file mới vào cột 'banner'
+        $group->banner = $file_name;
         $done = $group->save();
-        if($done){
-            // just put the file name and folder name nothing more :) 
-            if(!empty($request->cover_photo)){
-                if (File::exists(public_path('storage/groups/coverphoto/'.$imagename))) {
-                    File::delete(public_path('storage/groups/coverphoto/'.$imagename));
-                }
+
+        if ($done) {
+            // Xóa file cũ nếu nó tồn tại
+            if (!empty($old_banner_name) && File::exists(public_path('storage/groups/coverphoto/' . $old_banner_name))) {
+                File::delete(public_path('storage/groups/coverphoto/' . $old_banner_name));
             }
         }
-        Session::flash('success_message', get_phrase('Cover Photo Updated Successfully'));
-        return json_encode(array('reload' => 1));
     }
 
+    Session::flash('success_message', get_phrase('Cover Photo Updated Successfully'));
+    return response()->json(['reload' => 1]); // Trả về JSON response đúng chuẩn hơn
+}
 
 
     public function join($id){
@@ -243,7 +279,7 @@ class GroupController extends Controller
                  return json_encode(array('validationError' => $validator->getMessageBag()->toArray()));
             }
             foreach ($request->images as $key => $media_file) {
-                $file_name = FileUploader::upload($media_file, 'public/storage/album/images', 1000, null, 300);
+                $file_name = FileUploader::upload($media_file, 'storage/album/images', 1000, null, 300);
                 $file_type = 'image';
 
                 $albumimage = new Album_image();
@@ -282,10 +318,10 @@ class GroupController extends Controller
                     foreach ($request->images as $key => $media_file) {
                         $file_extention = strtolower($media_file->getClientOriginalExtension());
                         if ($file_extention == 'avi' || $file_extention == 'mp4' || $file_extention == 'webm' || $file_extention == 'mov' || $file_extention == 'wmv' || $file_extention == 'mkv') {
-                            $file_name = FileUploader::upload($media_file, 'public/storage/post/videos');
+                            $file_name = FileUploader::upload($media_file, 'storage/post/videos');
                             $file_type = 'video';
                         } else {
-                            $file_name = FileUploader::upload($media_file, 'public/storage/post/images', 1000, null, 300);
+                            $file_name = FileUploader::upload($media_file, 'storage/post/images', 1000, null, 300);
                             $file_type = 'image';
                         }
         

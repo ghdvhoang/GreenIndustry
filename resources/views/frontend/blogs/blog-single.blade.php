@@ -1,25 +1,12 @@
-{{-- Thêm khối CSS để ghi đè màu khi hover.
-     Sử dụng @push('styles') là cách làm chuẩn trong Laravel nếu layout của bạn có @stack('styles').
-     Nếu không, bạn có thể thay @push('styles') và @endpush bằng <style> và </style>.
---}}
+
 @push('styles')
 <style>
-    /* 
-      Chúng ta nhắm mục tiêu vào các thẻ <a> nằm trong article.card
-      để đảm bảo không ảnh hưởng tới các link khác trên trang.
-    */
     .card .card-body a {
-        /* Thêm hiệu ứng chuyển màu mượt mà trong 0.2 giây */
         transition: color 0.2s ease-in-out;
     }
 
-    /* 
-      Khi di chuột vào link (a:hover), đổi màu của nó.
-      Sử dụng !important để đảm bảo quy tắc này được ưu tiên,
-      ghi đè lên các class của Bootstrap như 'text-dark'.
-    */
     .card .card-body a:hover {
-        color: #50cd89 !important; /* MÀU XANH BẠN MUỐN */
+        color: #50cd89 !important; 
     }
 </style>
 @endpush

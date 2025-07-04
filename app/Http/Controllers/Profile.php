@@ -386,7 +386,7 @@ class Profile extends Controller
                 return json_encode(array('validationError' => $validator->getMessageBag()->toArray()));
             }
 
-            $file_name = FileUploader::upload($request->cover_photo,'public/storage/cover_photo', 1120);
+            $file_name = FileUploader::upload($request->cover_photo,'storage/cover_photo', 1120);
 
             //Update to database
             $data['cover_photo'] = $file_name;

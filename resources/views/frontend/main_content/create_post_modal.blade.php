@@ -164,9 +164,6 @@
                                 <button type="button" onclick="loadMaps('map')" data-tab="tab-location"
                                     class="btn btn-secondary m_btn"><img src="{{ asset('storage/images/location.png') }}"
                                         alt="photo"></button>
-                                <button type="button" class="btn btn-secondary m_btn" onclick="confirmLiveStreaming()"><img
-                                        src="{{ asset('storage/images/camera.svg') }}"
-                                        alt="photo"></button>
                                 </div>
                          </div>
                         <button type="submit"

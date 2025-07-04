@@ -1,5 +1,4 @@
-
-            <div class="widget ng_widget">
+<div class="widget ng_widget">
                 <div class="w_btn">
                     <button class="btn common_btn d-block w-100"
                         onclick="showCustomModal('{{route('load_modal_content', ['view_path' => 'frontend.groups.create'])}}', '{{get_phrase(' Create New Group')}}');">
@@ -40,14 +39,16 @@
             <div class=" group-widget join_wid">
                 <h3 class="widget-title">{{ get_phrase('Group you Joined') }}</h3>
                     @foreach ($joinedgroups as $joinedgroup )
-                        <div class="d-flex align-items-center mt-3">
-                            <div class="widget-img">
-                                <img src="{{ get_group_logo($joinedgroup->getGroup->logo,'logo') }}" alt="" class="img-fluid img-radisu">
+                        @if ($joinedgroup->getGroup)
+                            <div class="d-flex align-items-center mt-3">
+                                <div class="widget-img">
+                                    <img src="{{ get_group_logo($joinedgroup->getGroup->logo,'logo') }}" alt="" class="img-fluid img-radisu">
+                                </div>
+                                <div class="widget-info">
+                                    <h6><a href="{{ route('single.group',$joinedgroup->group_id) }}"> {{ $joinedgroup->getGroup->title }} </a></h6>
+                                </div>
                             </div>
-                            <div class="widget-info">
-                                <h6><a href="{{ route('single.group',$joinedgroup->group_id) }}"> {{ $joinedgroup->getGroup->title }} </a></h6>
-                            </div>
-                        </div>
+                        @endif
                     @endforeach
                     @if (count($joinedgroups)>8)
                         <a href="{{ route('group.user.joined') }}" class="btn common_btn mt-3 d-block w-100">{{ get_phrase('See All') }}</a>
